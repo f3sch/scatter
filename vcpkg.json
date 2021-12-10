@@ -1,0 +1,9 @@
+{
+  "name": "pad-scatter",
+  "version-string": "0.1",
+  "dependencies": [
+    "range-v3",
+    "benchmark",
+    "tbb"
+  ]
+}
