@@ -24,6 +24,13 @@ target_include_directories(padscatter
 set(HEADERS_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/include/padscatter)
 message(STATUS "HEADERS_INSTALL_PATH : " ${HEADERS_INSTALL_PATH})
 
+option(BUILD_TESTS "Build unit tests." ON)
+
+if (BUILD_TESTS)
+    find_package(GTest)
+    add_subdirectory(test)
+endif()
+
 
 install(TARGETS padscatter EXPORT PadScatter LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include/padscatter)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/ DESTINATION include/padscatter FILES_MATCHING PATTERN "*.h*")
