@@ -3,8 +3,14 @@
 
 #include <cassert>
 #include <iterator>
+#include <oneapi/tbb.h>
 #include <ranges>
 
+namespace pad {
+
+/*
+ * Simple and stupid serial scatter
+ */
 template <std::random_access_iterator OutIt_t, std::ranges::input_range InRng_t,
           std::ranges::input_range IdxRng_t>
 void serial_scatter(OutIt_t outIt, const InRng_t &inRng,
@@ -20,5 +26,7 @@ void serial_scatter(OutIt_t outIt, const InRng_t &inRng,
     *(outIt + j) = *inIt;
   }
 }
+
+} // end namespace pad
 
 #endif

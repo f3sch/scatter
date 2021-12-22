@@ -11,7 +11,7 @@ TEST(serial_scatter, string_simple) {
   std::shuffle(indices.begin(), indices.end(), std::mt19937{0});
 
   std::string input_scattered = input;
-  serial_scatter(input_scattered.begin(), input, indices);
+  pad::serial_scatter(input_scattered.begin(), input, indices);
 
   EXPECT_EQ(input_scattered, "e mpomrsuiL");
 }
