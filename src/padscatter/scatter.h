@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <iterator>
+#include <oneapi/dpl/iterator>
 #include <oneapi/tbb.h>
 #include <ranges>
 
@@ -25,6 +26,27 @@ void serial_scatter(OutIt_t outIt, const InRng_t &inRng,
     assert(0 <= j && j < std::ranges::size(idxRng));
     *(outIt + j) = *inIt;
   }
+}
+
+/*
+ * tbb scatter using a zip iterator as a convenient tool to split the ranges
+ * appropriately
+ */
+template <std::random_access_iterator OutIt_t, std::ranges::input_range InRng_t,
+          std::ranges::input_range IdxRng_t>
+void tbb_scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng) {
+  using namespace std;
+  using namespace oneapi;
+  auto zbegin = dpl::make_zip_iterator(begin(inRng), begin(idxRng));
+  auto zend = dpl::make_zip_iterator(end(inRng), end(idxRng));
+  tbb::parallel_for(tbb::blocked_range<decltype(zbegin)>(zbegin, zend),
+                    [=](const tbb::blocked_range<decltype(zbegin)> &r) {
+                      for (auto zIt = r.begin(); zIt != r.end(); zIt++) {
+                        auto [val, j] = *zIt;
+                        assert(0 <= j && j < std::ranges::size(idxRng));
+                        *(outIt + j) = val;
+                      }
+                    });
 }
 
 } // end namespace pad
