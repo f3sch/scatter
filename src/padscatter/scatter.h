@@ -29,12 +29,13 @@ void serial_scatter(OutIt_t outIt, const InRng_t &inRng,
 }
 
 /*
- * tbb scatter using a zip iterator as a convenient tool to split the ranges
- * appropriately
+ * tbb simple scatter using a zip iterator as a convenient tool to split the
+ * ranges appropriately
  */
 template <std::random_access_iterator OutIt_t, std::ranges::input_range InRng_t,
           std::ranges::input_range IdxRng_t>
-void tbb_scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng) {
+void tbb_scatter_simple(OutIt_t outIt, const InRng_t &inRng,
+                        const IdxRng_t &idxRng) {
   using namespace std;
   using namespace oneapi;
   auto zbegin = dpl::make_zip_iterator(begin(inRng), begin(idxRng));
