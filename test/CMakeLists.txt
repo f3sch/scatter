@@ -1,5 +1,14 @@
+find_package(GTest)
 
-add_executable(tst_scatter tst_scatter.cpp)
-target_link_libraries(tst_scatter padscatter GTest::gtest GTest::gtest_main)
-#target_compile_definitions(tst_scatter PRIVATE -DQT_NO_KEYWORDS)
-add_test(NAME tst_scatter COMMAND tst_scatter)
+# Custom add_my_test
+function(add_my_test targetName)
+        add_executable(${targetName} ${ARGN})
+        target_link_libraries(${targetName} PRIVATE padscatter GTest::GTest GTest::gtest_main)
+        gtest_add_tests(TARGET ${targetName}
+                EXTRA_ARGS ""
+                AUTO
+                TEST_SUFFIX .test
+        )
+endfunction()
+
+add_my_test(tst_scatter tst_scatter.cpp)

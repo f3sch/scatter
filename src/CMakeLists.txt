@@ -1,0 +1,20 @@
+# Interface Library
+add_library(padscatter INTERFACE)
+target_link_libraries(padscatter INTERFACE TBB::tbb Threads::Threads)
+target_include_directories(padscatter
+        INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/padscatter)
+
+# Benchmarks
+## Add costum add_benchmark
+function(add_my_benchmark targetName)
+        add_executable(${targetName} ${ARGN})
+        target_link_libraries(${targetName} PRIVATE padscatter benchmark::benchmark)
+        if(NOT DEFINED LOCAL)
+                message(STATUS "Building with compiler machine features for target ${targetName}")
+                target_compile_options(${targetName} PRIVATE -xSKYLAKE_AVX512)
+        endif()
+endfunction()
+
+## Add Benchmarks here
+add_my_benchmark(serialSimple ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/serial_simple.cpp)
+add_my_benchmark(tbbSimple ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/tbb_simple.cpp)
