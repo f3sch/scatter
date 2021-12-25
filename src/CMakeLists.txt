@@ -22,4 +22,5 @@ endfunction()
 
 ## Add Benchmarks here
 add_my_benchmark(serialSimple ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/serial_simple.cpp)
+add_my_benchmark(stdSimple ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/std_simple.cpp)
 add_my_benchmark(tbbSimple ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/tbb_simple.cpp)
