@@ -31,7 +31,7 @@ $ git clone https://mp-force.ziti.uni-heidelberg.de/asc/projects/lectures/parall
 $ mkdir build
 $ cd build
 # Generate build system files with cmake
-$ cmake -DLOCAL=1 --config Release ../scatter/
+$ cmake -DLOCAL=1 -DCMAKE_BUILD_TYPE=Release ../scatter/
 # Build the library.
 $ cmake --build .
 ```
