@@ -5,7 +5,7 @@
 
 static void benchSerialSimple(benchmark::State &state) {
   auto [vec, index] = makeData(state.range(0));
-  std::vector<float> out(state.range(0));
+  std::vector<DataType> out(state.range(0));
   for (auto _ : state) {
     pad::serial::scatter(out.begin(), vec, index);
     benchmark::DoNotOptimize(vec.data());

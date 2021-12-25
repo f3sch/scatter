@@ -5,12 +5,15 @@
 #include <limits>
 #include <vector>
 
-std::pair<std::vector<float>, std::vector<unsigned int>>
-makeData(unsigned int n);
-bool cmpFloat(float a, float b,
-              float eps = std::numeric_limits<float>::epsilon());
-void verifyScatter(std::vector<float> inVec, std::vector<unsigned int> index,
-                   std::vector<float> out);
+// Define data types
+using DataType = double;
+using Index = unsigned int;
+
+std::pair<std::vector<DataType>, std::vector<Index>> makeData(Index n);
+bool cmpFloat(DataType a, DataType b,
+              DataType eps = std::numeric_limits<DataType>::epsilon());
+void verifyScatter(std::vector<DataType> inVec, std::vector<Index> index,
+                   std::vector<DataType> out);
 void benchArgs(benchmark::internal::Benchmark *b);
 void benchCounters(benchmark::State &state);
 

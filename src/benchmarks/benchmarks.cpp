@@ -1,3 +1,4 @@
+#include "benchmarks.h"
 #include "scatter.h"
 #include <algorithm>
 #include <array>
@@ -11,32 +12,32 @@
 
 using namespace std;
 
-pair<vector<float>, vector<unsigned int>> makeData(unsigned int n) {
-  vector<float> vec(n);
-  vector<unsigned int> index(n);
+pair<vector<DataType>, vector<Index>> makeData(Index n) {
+  vector<DataType> vec(n);
+  vector<Index> index(n);
   random_device rnd_device;
   default_random_engine eng(rnd_device());
   mt19937 mersenne_engine{rnd_device()};
-  uniform_real_distribution<> dist(numeric_limits<float>::min(),
-                                   numeric_limits<float>::max());
+  uniform_real_distribution<> dist(numeric_limits<DataType>::min(),
+                                   numeric_limits<DataType>::max());
   auto gen = [&dist, &eng]() { return dist(eng); };
   generate(begin(vec), end(vec), gen);
-  for (unsigned int i = 0; i < n; i++)
+  for (Index i = 0; i < n; i++)
     index[i] = i;
   shuffle(begin(index), end(index), mersenne_engine);
 
   return make_pair(vec, index);
 }
 
-bool cmpFloat(float a, float b, float eps = numeric_limits<float>::epsilon()) {
+bool cmpFloat(DataType a, DataType b, DataType eps) {
   return fabs(a - b) <= eps;
 }
 
-void verifyScatter(vector<float> inVec, vector<unsigned int> index,
-                   vector<float> out) {
-  vector<float> correct(inVec.size());
+void verifyScatter(vector<DataType> inVec, vector<Index> index,
+                   vector<DataType> out) {
+  vector<DataType> correct(inVec.size());
   pad::serial::scatter(correct.begin(), inVec, index);
-  for (unsigned int i = 0; i < inVec.size(); i++) {
+  for (Index i = 0; i < inVec.size(); i++) {
     if (!cmpFloat(out[i], correct[i])) {
       throw runtime_error("Wrong Results");
     }
@@ -57,5 +58,5 @@ void benchCounters(benchmark::State &state) {
   state.counters["GOPS"] = GOPS;
   state.counters["GOPSperIter"] = GOPS / state.iterations();
   state.counters["Bytes_processed"] =
-      2 * state.range(0) * sizeof(float) + sizeof(unsigned int);
+      2 * state.range(0) * sizeof(DataType) + sizeof(unsigned int);
 }
