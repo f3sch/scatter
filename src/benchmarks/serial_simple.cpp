@@ -36,7 +36,7 @@ bool cmpFloat(float a, float b, float eps = numeric_limits<float>::epsilon()) {
 // static void verifyScatter(vector<float> inVec, vector<unsigned int> index,
 //                           vector<float> out) {
 //   vector<float> correct(inVec.size());
-//   pad::serial_scatter(correct.begin(), inVec, index);
+//   pad::serial::scatter(correct.begin(), inVec, index);
 //   for (unsigned int i = 0; i < inVec.size(); i++) {
 //     if (!cmpFloat(out[i], correct[i])) {
 //       throw runtime_error("Wrong Results");
@@ -65,7 +65,7 @@ static void benchSerialSimple(benchmark::State &state) {
   auto [vec, index] = makeData(state.range(0));
   vector<float> out(state.range(0));
   for (auto _ : state) {
-    pad::serial_scatter(out.begin(), vec, index);
+    pad::serial::scatter(out.begin(), vec, index);
     benchmark::DoNotOptimize(vec.data());
     benchmark::DoNotOptimize(index.data());
     benchmark::ClobberMemory();
