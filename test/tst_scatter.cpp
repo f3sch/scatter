@@ -74,7 +74,7 @@ TEST(std_scatter, string_simple) {
   std::shuffle(indices.begin(), indices.end(), std::mt19937{0});
 
   std::string input_scattered = input;
-  pad::std::scatter_simple(input_scattered.begin(), input, indices);
+  pad::stl::scatter(input_scattered.begin(), input, indices);
 
   EXPECT_EQ(input_scattered, "e mpomrsuiL");
 }
@@ -88,7 +88,7 @@ TEST(std_scatter, uints) {
   std::shuffle(indices.begin(), indices.end(), std::mt19937{0});
 
   std::vector<unsigned int> input_scattered = input;
-  pad::std::scatter_simple(input_scattered.begin(), input, indices);
+  pad::stl::scatter(input_scattered.begin(), input, indices);
   std::vector<unsigned int> correct = {3, 5, 10, 7, 1, 4, 2, 8, 9, 6, 0};
   EXPECT_EQ(input_scattered, correct);
 }
@@ -103,7 +103,7 @@ TEST(std_scatter, doubles) {
   std::shuffle(indices.begin(), indices.end(), std::mt19937{0});
 
   std::vector<double> input_scattered = input;
-  pad::std::scatter_simple(input_scattered.begin(), input, indices);
+  pad::stl::scatter(input_scattered.begin(), input, indices);
   std::vector<double> correct = {3.3, 5.5, 10.10, 7.7, 1.1, 4.4,
                                  2.2, 8.8, 9.9,   6.6, 0.0};
   EXPECT_EQ(input_scattered, correct);
@@ -119,7 +119,7 @@ TEST(std_scatter, floats) {
   std::shuffle(indices.begin(), indices.end(), std::mt19937{0});
 
   std::vector<float> input_scattered = input;
-  pad::std::scatter_simple(input_scattered.begin(), input, indices);
+  pad::stl::scatter(input_scattered.begin(), input, indices);
   std::vector<float> correct = {3.3f, 5.5f, 10.10f, 7.7f, 1.1f, 4.4,
                                 2.2f, 8.8f, 9.9f,   6.6f, 0.0f};
   EXPECT_EQ(input_scattered, correct);
