@@ -10,6 +10,7 @@
 #include <tbb/parallel_for.h>
 #include <vector>
 
+namespace pad::benchmarks {
 using namespace std;
 
 pair<vector<DataType>, vector<Index>> makeData(Index n) {
@@ -60,3 +61,5 @@ void benchCounters(benchmark::State &state) {
   state.counters["Bytes_processed"] =
       2 * state.range(0) * sizeof(DataType) + sizeof(unsigned int);
 }
+
+} // namespace pad::benchmarks

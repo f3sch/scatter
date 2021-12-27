@@ -5,6 +5,7 @@
 #include <limits>
 #include <vector>
 
+namespace pad::benchmarks {
 // Define data types
 using DataType = double;
 using Index = unsigned int;
@@ -16,5 +17,6 @@ void verifyScatter(std::vector<DataType> inVec, std::vector<Index> index,
                    std::vector<DataType> out);
 void benchArgs(benchmark::internal::Benchmark *b);
 void benchCounters(benchmark::State &state);
+} // namespace pad::benchmarks
 
 #endif
