@@ -1,0 +1,53 @@
+#!/bin/bash
+BIN_PATH="@CMAKE_SOURCE_ROOT@/bin"
+BENCHMARKS="@BENCHMARKS_AVAIL@"
+TESTS="@TESTS_AVAIL@"
+
+# Benchmark run output command
+BENCHMARK_OUT_FMT="json"
+BENCHMARK_OUT=" --benchmark_out_format=$BENCHMARK_OUT_FMT --benchmark_out="
+
+
+
+function run_benchmark {
+        select opt in "${BENCHMARKS[@]}"
+        do 
+                case $opt in
+                        1)
+                                echo "1"
+                                ;;
+                        *)
+                                echo "other"
+                                ;;
+                esac
+        done
+}
+
+function run_test {
+        ctest
+}
+
+# Bash Menu
+PS3='Please enter your choice: '
+options=("Run Benchmark" "Run Tests" "Plot Results" "Quit")
+select opt in "${options[@]}"
+do
+    case $opt in
+        "Run Benchmark")
+                run_benchmark
+            ;;
+        "Run Tests")
+                run_test
+            ;;
+        "Plot Results")
+            echo "you chose choice $REPLY which is $opt"
+            ;;
+        "Quit")
+            break
+            ;;
+        *)
+                echo "invalid option $REPLY"
+                break
+            ;;
+    esac
+done

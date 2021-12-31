@@ -16,13 +16,18 @@ if(NOT LOCAL)
   target_compile_options(padbench PUBLIC $<$<CXX_COMPILER_ID:GNU>:-xSKYLAKE_AVX512>)
 endif()
 
+set(BENCHMARKS_AVAIL_TMP "")
 ## Add costum add_benchmark
 function(add_my_benchmark targetName)
   add_executable(${targetName} ${ARGN})
   target_link_libraries(${targetName} PRIVATE padscatter benchmark::benchmark padbench)
+  set(BENCHMARKS_AVAIL_TMP "${BENCHMARKS_AVAIL_TMP} ${targetName}" PARENT_SCOPE)
 endfunction()
 
 ## Add Benchmarks here
 add_my_benchmark(serialBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/serial.cpp)
 add_my_benchmark(stlBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/stl.cpp)
 add_my_benchmark(tbbSimpleBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/tbb_simple.cpp)
+
+# Add to chached variable
+set(BENCHMARKS_AVAIL ${BENCHMARKS_AVAIL_TMP} CACHE INTERNAL ${BENCHMARKS_AVAIL_TMP})

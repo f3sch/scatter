@@ -1,5 +1,5 @@
 # Preamble
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.20)
 project(pad-scatter)
 enable_testing()
 
@@ -23,6 +23,9 @@ add_subdirectory(src)
 
 # Testing and Installing
 option(BUILD_TESTS "Build unit tests." ON)
-if (BUILD_TESTS)
-    add_subdirectory(test)
+if(BUILD_TESTS)
+  add_subdirectory(test)
 endif()
+
+# Scripts
+add_subdirectory(scripts)
