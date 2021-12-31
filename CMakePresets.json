@@ -1,0 +1,68 @@
+{
+  "version": 2,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20,
+    "patch": 3
+  },
+  "configurePresets": [
+    {
+      "name": "local",
+      "displayName": "Default Configuration for local development",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/local",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_FLAGS": "-march=native",
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+    {
+      "name": "release",
+      "displayName": "Default ASC Configuration",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_FLAGS": "-march=native",
+        "CMAKE_CXX_COMPILER": "clang++"
+      }
+    },
+    {
+      "name": "skylake",
+      "displayName": "Configuration for mp-skl2s24c",
+      "inherits": "release",
+      "binaryDir": "${sourceDir}/build/skylake",
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "-march=skylake-avx512 -mprefer-vector-width=512"
+      }
+    },
+    {
+      "name": "rome",
+      "displayName": "Configuration for ziti-rome3",
+      "inherits": "release",
+      "binaryDir": "${sourceDir}/build/rome",
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "-march=znver2"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "local",
+      "configurePreset": "local"
+    },
+    {
+      "name": "release",
+      "configurePreset": "release"
+    },
+    {
+      "name": "skylake",
+      "configurePreset": "skylake"
+    },
+    {
+      "name": "rome",
+      "configurePreset": "rome"
+    }
+  ]
+}

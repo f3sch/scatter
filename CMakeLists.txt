@@ -9,8 +9,6 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 set(CMAKE_CXX_EXTENSIONS NO)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror") #enforce stringent build requirements
-option(LOCAL "Build for local architecture instead of skylake architecture" OFF)
-include(AssureOutOfSourceBuilds) #enforce out of source builds
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin) #move runtime targets into one folder
 
 # Externally provided content

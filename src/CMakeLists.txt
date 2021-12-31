@@ -11,13 +11,9 @@ target_include_directories(
 add_library(padbench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/benchmarks.cpp)
 target_link_libraries(padbench PUBLIC padscatter benchmark::benchmark)
 target_compile_options(padbench PRIVATE -Wno-unused-function)
-if(NOT LOCAL)
-  message(STATUS "Building with compiler machine features for target")
-  target_compile_options(padbench PUBLIC $<$<CXX_COMPILER_ID:GNU>:-xSKYLAKE_AVX512>)
-endif()
 
-set(BENCHMARKS_AVAIL_TMP "")
 ## Add costum add_benchmark
+set(BENCHMARKS_AVAIL_TMP "")
 function(add_my_benchmark targetName)
   add_executable(${targetName} ${ARGN})
   target_link_libraries(${targetName} PRIVATE padscatter benchmark::benchmark padbench)
