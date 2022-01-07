@@ -1,12 +1,5 @@
 # External dependencies
 
-# VCPKG
-option(USE_VCPKG "Fetch dependencies using the vcpkg package manager" OFF)
-if (USE_VCPKG)
-    set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake
-        CACHE STRING "Vcpkg toolchain file")
-endif()
-
 # ECMSanitizers
 include(ECMEnableSanitizers)
 option(ECM_ENABLE "Enable the ECMSanitizers" OFF)

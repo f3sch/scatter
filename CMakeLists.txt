@@ -1,7 +1,22 @@
 # Preamble
 cmake_minimum_required(VERSION 3.20)
+
+# VCPKG
+option(USE_VCPKG "Fetch dependencies using the vcpkg package manager" OFF)
+if (USE_VCPKG)
+    set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake
+            CACHE STRING "Vcpkg toolchain file")
+endif()
+
 project(pad-scatter)
 enable_testing()
+
+find_package(TBB CONFIG REQUIRED)
+find_package(range-v3 CONFIG REQUIRED)
+find_package(GTest CONFIG REQUIRED)
+find_package(benchmark CONFIG REQUIRED)
+find_package(xsimd CONFIG REQUIRED)
+
 
 # Project wide setup
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
