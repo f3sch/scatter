@@ -23,8 +23,7 @@ pair<vector<DataType>, vector<Index>> makeData(Index n) {
                                    numeric_limits<DataType>::max());
   auto gen = [&dist, &eng]() { return dist(eng); };
   generate(begin(vec), end(vec), gen);
-  for (Index i = 0; i < n; i++)
-    index[i] = i;
+  std::iota(index.begin(), index.end(), 0);
   shuffle(begin(index), end(index), mersenne_engine);
 
   return make_pair(vec, index);
