@@ -25,7 +25,7 @@
 
 static void benchSerialUnrolledLoopRandom(benchmark::State &state) {
   auto [vec, index] = pad::benchmarks::makeData(state.range(0));
-  std::vector<pad::benchmarks::DataType> out(state.range(0));
+  pad::benchmarks::DataVec out(state.range(0));
   for (auto _ : state) {
     pad::serial_unrolled_loop::scatter(out.begin(), vec, index);
     benchmark::DoNotOptimize(vec.data());
