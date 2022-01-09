@@ -7,7 +7,7 @@ static void benchSerialSimple(benchmark::State &state) {
   auto [vec, index] = pad::benchmarks::makeData(state.range(0));
   std::vector<pad::benchmarks::DataType> out(state.range(0));
   for (auto _ : state) {
-    pad::tbb::scatter_simple(out.begin(), vec, index);
+    pad::tbb_simple::scatter(out.begin(), vec, index);
     benchmark::DoNotOptimize(vec.data());
     benchmark::DoNotOptimize(index.data());
     benchmark::ClobberMemory();

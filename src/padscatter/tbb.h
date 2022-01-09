@@ -7,7 +7,7 @@
 #include <oneapi/tbb.h>
 #include <range/v3/view/zip.hpp>
 
-namespace pad::tbb
+namespace pad::tbb_simple
 {
 
 /*
@@ -15,7 +15,7 @@ namespace pad::tbb
  * ranges appropriately
  */
 template <typename OutIt_t, typename InRng_t, typename IdxRng_t>
-void scatter_simple(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
+void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
 {
   using namespace ranges::views;
   using namespace oneapi;
