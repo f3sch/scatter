@@ -23,8 +23,9 @@ endfunction()
 ## Add Benchmarks here
 add_my_benchmark(serialBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/serial.cpp)
 add_my_benchmark(stlBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/stl.cpp)
-add_my_benchmark(tbbSimpleBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/tbb_simple.cpp)
 add_my_benchmark(serialUnrolledLoopBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/serial_unrolled_loop.cpp)
+add_my_benchmark(tbbSimpleBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/tbb_simple.cpp)
+add_my_benchmark(tbbPresortBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/tbb_presort.cpp)
 
 # Add to chached variable
 set(BENCHMARKS_AVAIL ${BENCHMARKS_AVAIL_TMP} CACHE INTERNAL ${BENCHMARKS_AVAIL_TMP})
