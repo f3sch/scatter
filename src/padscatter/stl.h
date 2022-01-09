@@ -4,8 +4,9 @@
 #include <cassert>
 #include <execution>
 #include <iterator>
-#include <oneapi/dpl/iterator>
 #include <ranges>
+#include <range/v3/view/zip.hpp>
+#include <range/v3/size.hpp>
 
 namespace pad::stl {
 
@@ -16,13 +17,10 @@ template <::std::random_access_iterator OutIt_t,
           ::std::ranges::input_range InRng_t,
           ::std::ranges::input_range IdxRng_t>
 void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng) {
-  using namespace oneapi;
-  auto zbegin =
-      dpl::make_zip_iterator(::std::begin(inRng), ::std::begin(idxRng));
-  auto zend = dpl::make_zip_iterator(::std::end(inRng), ::std::end(idxRng));
-  ::std::for_each(::std::execution::par_unseq, zbegin, zend, [=](auto zIt) {
-    auto [val, j] = zIt;
-    assert(0 <= j && j < ::std::ranges::size(idxRng));
+  auto z = ranges::views::zip(inRng, idxRng);
+  std::for_each(::std::execution::par_unseq, z.begin(), z.end(), [=](auto z) {
+    auto [val, j] = z;
+    assert(0 <= j && j < ranges::size(idxRng));
     *(outIt + j) = val;
   });
 }
