@@ -3,15 +3,14 @@
 
 #include <cassert>
 #include <iterator>
-#include <ranges>
+#include <range/v3/size.hpp>
 
 namespace pad::serial {
 
 /*
  * Simple and stupid serial scatter
  */
-template <std::random_access_iterator OutIt_t, std::ranges::input_range InRng_t,
-          std::ranges::input_range IdxRng_t>
+template <typename OutIt_t, typename InRng_t, typename IdxRng_t>
 void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng) {
   using namespace std;
   auto inIt = begin(inRng);
@@ -20,7 +19,7 @@ void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng) {
   auto idxEnd = end(idxRng);
   for (; inIt != inEnd && idxIt != idxEnd; ++inIt, ++idxIt) {
     auto j = *idxIt;
-    assert(0 <= j && j < std::ranges::size(idxRng));
+    assert(0 <= j && j < ranges::size(idxRng));
     *(outIt + j) = *inIt;
   }
 }

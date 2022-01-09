@@ -6,7 +6,6 @@
 #include <iterator>
 //#include <oneapi/dpl/iterator>
 #include <oneapi/tbb.h>
-#include <ranges>
 #include <range/v3/view/zip.hpp>
 
 namespace pad::tbb {
@@ -15,9 +14,9 @@ namespace pad::tbb {
  * tbb simple scatter using a zip iterator as a convenient tool to split the
  * ranges appropriately
  */
-template <::std::random_access_iterator OutIt_t,
-          ::std::ranges::input_range InRng_t,
-          ::std::ranges::input_range IdxRng_t>
+template <typename OutIt_t,
+          typename InRng_t,
+          typename IdxRng_t>
 void scatter_simple(OutIt_t outIt, const InRng_t &inRng,
                     const IdxRng_t &idxRng) {
 //  using namespace std;

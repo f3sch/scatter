@@ -11,9 +11,9 @@
 #include <iterator>
 #include <oneapi/tbb.h>
 #include <future>
-#include <ranges>
 #include <array>
 #include <vector>
+#include <range/v3/size.hpp>
 
 namespace pad {
 
@@ -21,8 +21,7 @@ namespace serial_unrolled_loop {
 /*
  * Simple and stupid serial scatter with loop unrolling
  */
-template <std::random_access_iterator OutIt_t, std::ranges::input_range InRng_t,
-	std::ranges::input_range IdxRng_t>
+template <typename OutIt_t, typename InRng_t, typename IdxRng_t>
 void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng) {
 	using namespace std;
 	auto inIt = begin(inRng);
@@ -32,7 +31,7 @@ void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng) {
 //	auto N = std::size(inRng);
 
 	constexpr std::size_t simd_size = 8;
-	assert(std::size(inRng) % simd_size == 0);
+	assert(ranges::size(inRng) % simd_size == 0);
 //	std::size_t vec_size = N - N % simd_size;
 	for (; inIt != inEnd && idxIt != idxEnd; inIt += simd_size, idxIt += simd_size) {
 		auto j0 = idxIt[0];
@@ -51,10 +50,10 @@ void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng) {
 		auto val5 = inIt[5];
 		auto val6 = inIt[6];
 		auto val7 = inIt[7];
-		assert(0 <= j0 && j0 < std::ranges::size(idxRng));
-		assert(0 <= j1 && j1 < std::ranges::size(idxRng));
-		assert(0 <= j2 && j2 < std::ranges::size(idxRng));
-		assert(0 <= j3 && j3 < std::ranges::size(idxRng));
+		assert(0 <= j0 && j0 < ranges::size(idxRng));
+		assert(0 <= j1 && j1 < ranges::size(idxRng));
+		assert(0 <= j2 && j2 < ranges::size(idxRng));
+		assert(0 <= j3 && j3 < ranges::size(idxRng));
 		(outIt + j0)[0] = val0;
 		(outIt + j1)[1] = val1;
 		(outIt + j2)[2] = val2;

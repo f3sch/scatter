@@ -12,11 +12,12 @@
 #include <iterator>
 #include <oneapi/tbb.h>
 #include <future>
-#include <ranges>
 #include <array>
 #include <vector>
 
 #include <range/v3/view/zip.hpp>
+#include <range/v3/view/subrange.hpp>
+#include <range/v3/size.hpp>
 
 namespace pad {
 
@@ -39,16 +40,15 @@ inline size_t log2(size_t x)
 template<size_t baseCaseThreshold = 1024,
 	size_t subdivisionExponent = 5,
 	size_t parallelism = 8,
-	std::random_access_iterator OutIt_t,
-  std::ranges::contiguous_range InRng_t,
-  std::ranges::contiguous_range IdxRng_t>
+	typename OutIt_t,
+  typename InRng_t,
+  typename IdxRng_t>
 void scatter(OutIt_t outBegin, const InRng_t &in, const IdxRng_t &idx, InRng_t &tmp, IdxRng_t &tmpIdx)
 {
-	using namespace std;
-	auto N = size(in);
-	assert(size(idx) == N);
-	assert(size(tmp) == N);
-	assert(size(tmpIdx) == N);
+	auto N = ranges::size(in);
+	assert(ranges::size(idx) == N);
+	assert(ranges::size(tmp) == N);
+	assert(ranges::size(tmpIdx) == N);
 
 	std::array<size_t, parallelism> bins;
 	auto bitShift = detail::log2(N) - detail::log2(parallelism);
@@ -78,8 +78,8 @@ void scatter(OutIt_t outBegin, const InRng_t &in, const IdxRng_t &idx, InRng_t &
 	for( size_t i = 0; i < parallelism; ++i ) {
     auto task = [
       outBegin = outBegin + i * step,
-      in = std::ranges::subrange(tmpBegin + i * step, tmpBegin + (i + 1) * step),
-      idx = std::ranges::subrange(tmpIdxBegin + i * step, tmpIdxBegin + (i + 1) * step)
+      in = ranges::subrange(tmpBegin + i * step, tmpBegin + (i + 1) * step),
+      idx = ranges::subrange(tmpIdxBegin + i * step, tmpIdxBegin + (i + 1) * step)
     ] {
       pad::serial::scatter(outBegin, in, idx);
     };
