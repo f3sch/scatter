@@ -5,13 +5,15 @@
 #include <iterator>
 #include <range/v3/size.hpp>
 
-namespace pad::serial {
+namespace pad::serial
+{
 
 /*
  * Simple and stupid serial scatter
  */
 template <typename OutIt_t, typename InRng_t, typename IdxRng_t>
-void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng) {
+void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
+{
   using namespace std;
   auto inIt = begin(inRng);
   auto inEnd = end(inRng);
@@ -19,7 +21,7 @@ void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng) {
   auto idxEnd = end(idxRng);
   for (; inIt != inEnd && idxIt != idxEnd; ++inIt, ++idxIt) {
     auto j = *idxIt;
-    assert(0 <= j && j < ranges::size(idxRng));
+    assert(0 <= j && j < ::ranges::size(idxRng));
     *(outIt + j) = *inIt;
   }
 }
