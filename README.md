@@ -5,38 +5,12 @@
 ```bash
 $ git submodule init
 $ git submodule update --recursive
-$ ./vcpkg/bootstrap-vcpkg.sh
-# In-source building is currently forbidden
-$ mkdir build && cd build
-$ cmake -DUSE_VCPKG=On -DLOCAL=On -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
-$ cmake --build .
+$ ./vcpkg/bootstrap-vcpkg.sh -disableMetrics
+$ cmake -DUSE_VCPKG=On --preset local
+$ cmake --build --preset local
 ```
 
-## Compilation not using vcpkg
-
-This describes the installation process using cmake. As pre-requisites, you'll
-need git and cmake installed.
-
-For TBB: https://github.com/oneapi-src/oneTBB/blob/master/INSTALL.md
-
-For DPL: https://github.com/oneapi-src/oneDPL
-
-Example:
-```bash
-# Go to /tmp dir
-$ cd /tmp
-# Check out the library.
-$ git clone https://mp-force.ziti.uni-heidelberg.de/asc/projects/lectures/parallel-algorithm-design/ws21/scatter.git
-# Make a build directory to place the build output.
-$ mkdir build
-$ cd build
-# Generate build system files with cmake and build, choose what is needed
-$ cmake --preset release && cmake --build --preset release
-$ cmake --preset skylake && cmake --build --preset skylake
-$ cmake --preset local && cmake --build --preset local
-```
-
-Or use the script:
-```bash
-$ ./scripts/build.sh
-```
+<!-- Or use the script: -->
+<!-- ```bash -->
+<!-- $ ./scripts/build.sh -->
+<!-- ``` -->

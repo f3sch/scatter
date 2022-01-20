@@ -26,9 +26,16 @@ build_preset() {
   cmake --build --preset "${type}"
 }
 
+# Install dependencies
+install() {
+  git submodule init
+  git submodule update --recursive
+  ./vcpkg/bootstrap-vcpkg.sh -disableMetrics
+}
+
 # Bash Menu
 PS3='Please enter your choice: '
-options=("local" "release" "skylake" "Quit")
+options=("local" "release" "skylake" "install" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -40,6 +47,9 @@ do
             ;;
         "skylake")
                 build_preset skylake
+            ;;
+        "install")
+                install
             ;;
         "Quit")
             break

@@ -16,7 +16,7 @@ target_compile_options(padbench PRIVATE -Wno-unused-function)
 set(BENCHMARKS_AVAIL_TMP "")
 function(add_my_benchmark targetName)
   add_executable(${targetName} ${ARGN})
-  target_link_libraries(${targetName} PRIVATE padscatter benchmark::benchmark padbench)
+  target_link_libraries(${targetName} PRIVATE padscatter benchmark::benchmark_main padbench)
   set(BENCHMARKS_AVAIL_TMP "${BENCHMARKS_AVAIL_TMP} ${targetName}" PARENT_SCOPE)
 endfunction()
 

@@ -4,43 +4,30 @@
 #include <cassert>
 #include <execution>
 #include <iterator>
-//#include <oneapi/dpl/iterator>
 #include <oneapi/tbb.h>
 #include <range/v3/view/zip.hpp>
 
-namespace pad::tbb {
+namespace pad::tbb
+{
 
 /*
  * tbb simple scatter using a zip iterator as a convenient tool to split the
  * ranges appropriately
  */
-template <typename OutIt_t,
-          typename InRng_t,
-          typename IdxRng_t>
-void scatter_simple(OutIt_t outIt, const InRng_t &inRng,
-                    const IdxRng_t &idxRng) {
-//  using namespace std;
-//  using namespace oneapi;
-//  auto zbegin = dpl::make_zip_iterator(begin(inRng), begin(idxRng));
-//  auto zend = dpl::make_zip_iterator(end(inRng), end(idxRng));
-//  ::tbb::parallel_for(::tbb::blocked_range<decltype(zbegin)>(zbegin, zend),
-//                      [=](const ::tbb::blocked_range<decltype(zbegin)> &r) {
-//                        for (auto zIt = r.begin(); zIt != r.end(); zIt++) {
-//                          auto [val, j] = *zIt;
-//                          assert(0 <= j && j < ::std::ranges::size(idxRng));
-//                          *(outIt + j) = val;
-//                        }
-//                      });
-
+template <typename OutIt_t, typename InRng_t, typename IdxRng_t>
+void scatter_simple(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
+{
   using namespace ranges::views;
+  using namespace oneapi;
 
   auto serial_scatter = [=](const auto &subrange) {
-          for (const auto &[val, idx] : subrange) {
-            outIt[idx] = val;
-          }
+    for (const auto &[val, idx] : subrange) {
+      outIt[idx] = val;
+    }
   };
   auto z = zip(inRng, idxRng);
-  tbb::parallel_for(tbb::blocked_range{ z.begin(), z.end() }, serial_scatter);
+  ::tbb::parallel_for(::tbb::blocked_range{ z.begin(), z.end() },
+                      serial_scatter);
 }
 
 } // namespace pad::tbb

@@ -11,13 +11,6 @@ endif()
 project(pad-scatter)
 enable_testing()
 
-find_package(TBB CONFIG REQUIRED)
-find_package(range-v3 CONFIG REQUIRED)
-find_package(GTest CONFIG REQUIRED)
-find_package(benchmark CONFIG REQUIRED)
-find_package(xsimd CONFIG REQUIRED)
-
-
 # Project wide setup
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 set(CMAKE_CXX_STANDARD 20)

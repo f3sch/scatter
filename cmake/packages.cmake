@@ -1,6 +1,5 @@
-# Threads
-find_package(Threads REQUIRED)
-# TBB
-find_package(TBB REQUIRED)
-# Google Benchmark
-find_package(benchmark REQUIRED)
+find_package(TBB CONFIG REQUIRED)
+find_package(range-v3 CONFIG REQUIRED)
+find_package(GTest CONFIG REQUIRED)
+find_package(benchmark CONFIG REQUIRED)
+# find_package(xsimd CONFIG REQUIRED)
