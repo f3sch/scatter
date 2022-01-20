@@ -3,7 +3,7 @@
 #include <benchmark/benchmark.h>
 #include <vector>
 
-static void benchSerialSimple(benchmark::State &state)
+static void benchTbbScan(benchmark::State &state)
 {
   auto [vec, index] = pad::benchmarks::makeData(state.range(0));
   std::vector<pad::benchmarks::DataType> out(state.range(0));
@@ -16,5 +16,5 @@ static void benchSerialSimple(benchmark::State &state)
   pad::benchmarks::verifyScatter(vec, index, out);
   pad::benchmarks::benchCounters(state);
 }
-BENCHMARK(benchSerialSimple)->Apply(pad::benchmarks::benchArgs)->UseRealTime();
+BENCHMARK(benchTbbScan)->Apply(pad::benchmarks::benchArgs)->UseRealTime();
 BENCHMARK_MAIN();
