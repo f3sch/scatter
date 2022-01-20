@@ -1,4 +1,5 @@
 #include "scatter.h"
+#include "serial_scan.h"
 #include <algorithm>
 #include <gtest/gtest.h>
 #include <iostream>
@@ -8,10 +9,11 @@
 /*
  * Test for the simpel serial scatter using strings
  */
-TEST(serial_scatter, string_simple) {
+TEST(serial_scatter, string_simple)
+{
   std::string input = "Lorem ipsum";
-  std::vector<size_t> indices{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  std::shuffle(indices.begin(), indices.end(), std::mt19937{0});
+  std::vector<size_t> indices{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::shuffle(indices.begin(), indices.end(), std::mt19937{ 0 });
 
   std::string input_scattered = input;
   pad::serial::scatter(input_scattered.begin(), input, indices);
@@ -22,56 +24,123 @@ TEST(serial_scatter, string_simple) {
 /*
  * Test for the simple serial scatter using uints
  */
-TEST(serial_scatter, uints) {
-  std::vector<unsigned int> input = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  std::vector<size_t> indices{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  std::shuffle(indices.begin(), indices.end(), std::mt19937{0});
+TEST(serial_scatter, uints)
+{
+  std::vector<unsigned int> input = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::vector<size_t> indices{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::shuffle(indices.begin(), indices.end(), std::mt19937{ 0 });
 
   std::vector<unsigned int> input_scattered = input;
   pad::serial::scatter(input_scattered.begin(), input, indices);
-  std::vector<unsigned int> correct = {3, 5, 10, 7, 1, 4, 2, 8, 9, 6, 0};
+  std::vector<unsigned int> correct = { 3, 5, 10, 7, 1, 4, 2, 8, 9, 6, 0 };
   EXPECT_EQ(input_scattered, correct);
 }
 
 /*
  * Test for the simple serial scatter using doubles
  */
-TEST(serial_scatter, doubles) {
-  std::vector<double> input = {0.0, 1.1, 2.2, 3.3, 4.4,  5.5,
-                               6.6, 7.7, 8.8, 9.9, 10.10};
-  std::vector<size_t> indices{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  std::shuffle(indices.begin(), indices.end(), std::mt19937{0});
+TEST(serial_scatter, doubles)
+{
+  std::vector<double> input = { 0.0, 1.1, 2.2, 3.3, 4.4,  5.5,
+                                6.6, 7.7, 8.8, 9.9, 10.10 };
+  std::vector<size_t> indices{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::shuffle(indices.begin(), indices.end(), std::mt19937{ 0 });
 
   std::vector<double> input_scattered = input;
   pad::serial::scatter(input_scattered.begin(), input, indices);
-  std::vector<double> correct = {3.3, 5.5, 10.10, 7.7, 1.1, 4.4,
-                                 2.2, 8.8, 9.9,   6.6, 0.0};
+  std::vector<double> correct = { 3.3, 5.5, 10.10, 7.7, 1.1, 4.4,
+                                  2.2, 8.8, 9.9,   6.6, 0.0 };
   EXPECT_EQ(input_scattered, correct);
 }
 
 /*
  * Test for the simple serial scatter using floats
  */
-TEST(serial_scatter, floats) {
-  std::vector<float> input = {0.0f, 1.1f, 2.2f, 3.3f, 4.4f,  5.5f,
-                              6.6f, 7.7f, 8.8f, 9.9f, 10.10f};
-  std::vector<float> indices{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  std::shuffle(indices.begin(), indices.end(), std::mt19937{0});
+TEST(serial_scatter, floats)
+{
+  std::vector<float> input = { 0.0f, 1.1f, 2.2f, 3.3f, 4.4f,  5.5f,
+                               6.6f, 7.7f, 8.8f, 9.9f, 10.10f };
+  std::vector<float> indices{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::shuffle(indices.begin(), indices.end(), std::mt19937{ 0 });
 
   std::vector<float> input_scattered = input;
   pad::serial::scatter(input_scattered.begin(), input, indices);
-  std::vector<float> correct = {3.3f, 5.5f, 10.10f, 7.7f, 1.1f, 4.4,
-                                2.2f, 8.8f, 9.9f,   6.6f, 0.0f};
+  std::vector<float> correct = { 3.3f, 5.5f, 10.10f, 7.7f, 1.1f, 4.4,
+                                 2.2f, 8.8f, 9.9f,   6.6f, 0.0f };
+  EXPECT_EQ(input_scattered, correct);
+}
+
+/*
+ * Test for the serial scan scatter using strings
+ */
+TEST(serial_scan, string_simple)
+{
+  std::string input = "Lorem ipsum";
+  std::vector<size_t> indices{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::shuffle(indices.begin(), indices.end(), std::mt19937{ 0 });
+
+  std::string input_scattered = input;
+  pad::serial::scan::scatter(input_scattered.begin(), input, indices);
+
+  EXPECT_EQ(input_scattered, "e mpomrsuiL");
+}
+
+/*
+ * Test for the serial scan scatter using uints
+ */
+TEST(serial_scan, uints)
+{
+  std::vector<unsigned int> input = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::vector<size_t> indices{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::shuffle(indices.begin(), indices.end(), std::mt19937{ 0 });
+
+  std::vector<unsigned int> input_scattered = input;
+  pad::serial::scatter(input_scattered.begin(), input, indices);
+  std::vector<unsigned int> correct = { 3, 5, 10, 7, 1, 4, 2, 8, 9, 6, 0 };
+  EXPECT_EQ(input_scattered, correct);
+}
+
+/*
+ * Test for the serial scan scatter using doubles
+ */
+TEST(serial_scan, doubles)
+{
+  std::vector<double> input = { 0.0, 1.1, 2.2, 3.3, 4.4,  5.5,
+                                6.6, 7.7, 8.8, 9.9, 10.10 };
+  std::vector<size_t> indices{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::shuffle(indices.begin(), indices.end(), std::mt19937{ 0 });
+
+  std::vector<double> input_scattered = input;
+  pad::serial::scatter(input_scattered.begin(), input, indices);
+  std::vector<double> correct = { 3.3, 5.5, 10.10, 7.7, 1.1, 4.4,
+                                  2.2, 8.8, 9.9,   6.6, 0.0 };
+  EXPECT_EQ(input_scattered, correct);
+}
+/*
+ * Test for the serial scan scatter using floats
+ */
+TEST(serial_scan, floats)
+{
+  std::vector<float> input = { 0.0f, 1.1f, 2.2f, 3.3f, 4.4f,  5.5f,
+                               6.6f, 7.7f, 8.8f, 9.9f, 10.10f };
+  std::vector<float> indices{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::shuffle(indices.begin(), indices.end(), std::mt19937{ 0 });
+
+  std::vector<float> input_scattered = input;
+  pad::serial::scan::scatter(input_scattered.begin(), input, indices);
+  std::vector<float> correct = { 3.3f, 5.5f, 10.10f, 7.7f, 1.1f, 4.4,
+                                 2.2f, 8.8f, 9.9f,   6.6f, 0.0f };
   EXPECT_EQ(input_scattered, correct);
 }
 
 /*
  * Test for the stl scatter using strings
  */
-TEST(stl_scatter, string_simple) {
+TEST(stl_scatter, string_simple)
+{
   std::string input = "Lorem ipsum";
-  std::vector<size_t> indices{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  std::shuffle(indices.begin(), indices.end(), std::mt19937{0});
+  std::vector<size_t> indices{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::shuffle(indices.begin(), indices.end(), std::mt19937{ 0 });
 
   std::string input_scattered = input;
   pad::stl::scatter(input_scattered.begin(), input, indices);
@@ -82,56 +151,60 @@ TEST(stl_scatter, string_simple) {
 /*
  * Test for the stl scatter using uints
  */
-TEST(stl_scatter, uints) {
-  std::vector<unsigned int> input = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  std::vector<size_t> indices{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  std::shuffle(indices.begin(), indices.end(), std::mt19937{0});
+TEST(stl_scatter, uints)
+{
+  std::vector<unsigned int> input = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::vector<size_t> indices{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::shuffle(indices.begin(), indices.end(), std::mt19937{ 0 });
 
   std::vector<unsigned int> input_scattered = input;
   pad::stl::scatter(input_scattered.begin(), input, indices);
-  std::vector<unsigned int> correct = {3, 5, 10, 7, 1, 4, 2, 8, 9, 6, 0};
+  std::vector<unsigned int> correct = { 3, 5, 10, 7, 1, 4, 2, 8, 9, 6, 0 };
   EXPECT_EQ(input_scattered, correct);
 }
 
 /*
  * Test for the stl scatter using doubles
  */
-TEST(stl_scatter, doubles) {
-  std::vector<double> input = {0.0, 1.1, 2.2, 3.3, 4.4,  5.5,
-                               6.6, 7.7, 8.8, 9.9, 10.10};
-  std::vector<size_t> indices{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  std::shuffle(indices.begin(), indices.end(), std::mt19937{0});
+TEST(stl_scatter, doubles)
+{
+  std::vector<double> input = { 0.0, 1.1, 2.2, 3.3, 4.4,  5.5,
+                                6.6, 7.7, 8.8, 9.9, 10.10 };
+  std::vector<size_t> indices{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::shuffle(indices.begin(), indices.end(), std::mt19937{ 0 });
 
   std::vector<double> input_scattered = input;
   pad::stl::scatter(input_scattered.begin(), input, indices);
-  std::vector<double> correct = {3.3, 5.5, 10.10, 7.7, 1.1, 4.4,
-                                 2.2, 8.8, 9.9,   6.6, 0.0};
+  std::vector<double> correct = { 3.3, 5.5, 10.10, 7.7, 1.1, 4.4,
+                                  2.2, 8.8, 9.9,   6.6, 0.0 };
   EXPECT_EQ(input_scattered, correct);
 }
 
 /*
  * Test for the stl scatter using floats
  */
-TEST(stl_scatter, floats) {
-  std::vector<float> input = {0.0f, 1.1f, 2.2f, 3.3f, 4.4f,  5.5f,
-                              6.6f, 7.7f, 8.8f, 9.9f, 10.10f};
-  std::vector<size_t> indices{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  std::shuffle(indices.begin(), indices.end(), std::mt19937{0});
+TEST(stl_scatter, floats)
+{
+  std::vector<float> input = { 0.0f, 1.1f, 2.2f, 3.3f, 4.4f,  5.5f,
+                               6.6f, 7.7f, 8.8f, 9.9f, 10.10f };
+  std::vector<size_t> indices{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::shuffle(indices.begin(), indices.end(), std::mt19937{ 0 });
 
   std::vector<float> input_scattered = input;
   pad::stl::scatter(input_scattered.begin(), input, indices);
-  std::vector<float> correct = {3.3f, 5.5f, 10.10f, 7.7f, 1.1f, 4.4,
-                                2.2f, 8.8f, 9.9f,   6.6f, 0.0f};
+  std::vector<float> correct = { 3.3f, 5.5f, 10.10f, 7.7f, 1.1f, 4.4,
+                                 2.2f, 8.8f, 9.9f,   6.6f, 0.0f };
   EXPECT_EQ(input_scattered, correct);
 }
 
 /*
  * Test for the tbb simple scatter using strings
  */
-TEST(tbb_scatter, string_simple) {
+TEST(tbb_scatter, string_simple)
+{
   std::string input = "Lorem ipsum";
-  std::vector<size_t> indices{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  std::shuffle(indices.begin(), indices.end(), std::mt19937{0});
+  std::vector<size_t> indices{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::shuffle(indices.begin(), indices.end(), std::mt19937{ 0 });
 
   std::string input_scattered = input;
   pad::tbb::scatter_simple(input_scattered.begin(), input, indices);
@@ -142,45 +215,48 @@ TEST(tbb_scatter, string_simple) {
 /*
  * Test for the tbb simple scatter using uints
  */
-TEST(tbb_scatter, uints) {
-  std::vector<unsigned int> input = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  std::vector<size_t> indices{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  std::shuffle(indices.begin(), indices.end(), std::mt19937{0});
+TEST(tbb_scatter, uints)
+{
+  std::vector<unsigned int> input = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::vector<size_t> indices{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::shuffle(indices.begin(), indices.end(), std::mt19937{ 0 });
 
   std::vector<unsigned int> input_scattered = input;
   pad::tbb::scatter_simple(input_scattered.begin(), input, indices);
-  std::vector<unsigned int> correct = {3, 5, 10, 7, 1, 4, 2, 8, 9, 6, 0};
+  std::vector<unsigned int> correct = { 3, 5, 10, 7, 1, 4, 2, 8, 9, 6, 0 };
   EXPECT_EQ(input_scattered, correct);
 }
 
 /*
  * Test for the tbb simple scatter using doubles
  */
-TEST(tbb_scatter, doubles) {
-  std::vector<double> input = {0.0, 1.1, 2.2, 3.3, 4.4,  5.5,
-                               6.6, 7.7, 8.8, 9.9, 10.10};
-  std::vector<size_t> indices{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  std::shuffle(indices.begin(), indices.end(), std::mt19937{0});
+TEST(tbb_scatter, doubles)
+{
+  std::vector<double> input = { 0.0, 1.1, 2.2, 3.3, 4.4,  5.5,
+                                6.6, 7.7, 8.8, 9.9, 10.10 };
+  std::vector<size_t> indices{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::shuffle(indices.begin(), indices.end(), std::mt19937{ 0 });
 
   std::vector<double> input_scattered = input;
   pad::tbb::scatter_simple(input_scattered.begin(), input, indices);
-  std::vector<double> correct = {3.3, 5.5, 10.10, 7.7, 1.1, 4.4,
-                                 2.2, 8.8, 9.9,   6.6, 0.0};
+  std::vector<double> correct = { 3.3, 5.5, 10.10, 7.7, 1.1, 4.4,
+                                  2.2, 8.8, 9.9,   6.6, 0.0 };
   EXPECT_EQ(input_scattered, correct);
 }
 
 /*
  * Test for the tbb simple scatter using floats
  */
-TEST(tbb_scatter, floats) {
-  std::vector<float> input = {0.0f, 1.1f, 2.2f, 3.3f, 4.4f,  5.5f,
-                              6.6f, 7.7f, 8.8f, 9.9f, 10.10f};
-  std::vector<size_t> indices{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  std::shuffle(indices.begin(), indices.end(), std::mt19937{0});
+TEST(tbb_scatter, floats)
+{
+  std::vector<float> input = { 0.0f, 1.1f, 2.2f, 3.3f, 4.4f,  5.5f,
+                               6.6f, 7.7f, 8.8f, 9.9f, 10.10f };
+  std::vector<size_t> indices{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+  std::shuffle(indices.begin(), indices.end(), std::mt19937{ 0 });
 
   std::vector<float> input_scattered = input;
   pad::tbb::scatter_simple(input_scattered.begin(), input, indices);
-  std::vector<float> correct = {3.3f, 5.5f, 10.10f, 7.7f, 1.1f, 4.4,
-                                2.2f, 8.8f, 9.9f,   6.6f, 0.0f};
+  std::vector<float> correct = { 3.3f, 5.5f, 10.10f, 7.7f, 1.1f, 4.4,
+                                 2.2f, 8.8f, 9.9f,   6.6f, 0.0f };
   EXPECT_EQ(input_scattered, correct);
 }
