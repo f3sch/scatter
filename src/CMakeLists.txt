@@ -27,6 +27,7 @@ add_my_benchmark(serialScanBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/serial_s
 add_my_benchmark(stlBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/stl.cpp)
 add_my_benchmark(tbbSimpleBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/tbb_simple.cpp)
 add_my_benchmark(tbbPresortBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/tbb_presort.cpp)
+add_my_benchmark(tbbScanBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/tbb_scan.cpp)
 
 # Add to chached variable
 set(BENCHMARKS_AVAIL ${BENCHMARKS_AVAIL_TMP} CACHE INTERNAL ${BENCHMARKS_AVAIL_TMP})

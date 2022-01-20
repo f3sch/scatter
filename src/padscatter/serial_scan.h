@@ -7,7 +7,6 @@
 #include <vector>
 
 #include <range/v3/view/zip.hpp>
-#include <range/v3/view/chunk.hpp>
 #include <range/v3/view/subrange.hpp>
 #include <range/v3/size.hpp>
 
@@ -37,7 +36,8 @@ void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
   assert(ranges::size(idxRng) == N);
 
   // partition
-  size_t partitions = N / sizePartition + 1;
+  size_t partitions =
+      (N % sizePartition == 0) ? N / sizePartition : N / sizePartition + 1;
 
   for (size_t i = 0; i < partitions; ++i) {
     /*
