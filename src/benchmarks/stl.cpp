@@ -1,9 +1,10 @@
 #include "benchmarks.h"
-#include "scatter.h"
+#include "stl.h"
 #include <benchmark/benchmark.h>
 #include <vector>
 
-static void benchSTLSimple(benchmark::State &state) {
+static void benchSTLSimple(benchmark::State &state)
+{
   auto [vec, index] = pad::benchmarks::makeData(state.range(0));
   std::vector<pad::benchmarks::DataType> out(state.range(0));
   for (auto _ : state) {
