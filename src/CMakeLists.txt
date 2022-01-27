@@ -27,6 +27,7 @@ add_my_benchmark(serialUnrolledLoopBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/
 add_my_benchmark(serialSimdBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/serial_simd.cpp)
 add_my_benchmark(serialNTStoreBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/serial_ntstore.cpp)
 add_my_benchmark(serialScanBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/serial_scan.cpp)
+add_my_benchmark(serialBinningBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/serial_binning.cpp)
 add_my_benchmark(stlBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/stl.cpp)
 add_my_benchmark(tbbSimpleBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/tbb_simple.cpp)
 add_my_benchmark(tbbPresortBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/tbb_presort.cpp)
