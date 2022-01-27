@@ -1,0 +1,6 @@
+#+TITLE: Readme
+#+AUTHOR: Felix Schlepper
+
+* Data Folder
+Data stored is marked by the commit on which the benchmarks have been run.
+There could be additional information inside the folders in separate READMEs.

@@ -1,0 +1,11 @@
+#+TITLE: Readme
+#+AUTHOR: Felix Schlepper
+#+OPTIONS: tex:t
+
+* General
+Data form Commit 2ed9825.
+For our meeting on Wed 26.01.2022
+
+* Description
+We can see that the tbbSimple is outperfoming most other implementations.
+However, serialSimple catches up at $2^30$
