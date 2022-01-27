@@ -4,7 +4,6 @@
   "dependencies": [
     "range-v3",
     "benchmark",
-    "gtest",
-    "tbb"
+    "gtest"
   ]
 }

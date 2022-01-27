@@ -8,10 +8,12 @@
 #include <numeric>
 #include <random>
 #include <vector>
+#include <range/v3/all.hpp>
 
 namespace pad::benchmarks
 {
 using namespace std;
+namespace rng = ::ranges;
 
 pair<vector<DataType>, vector<Index> > makeData(Index n)
 {
@@ -26,6 +28,31 @@ pair<vector<DataType>, vector<Index> > makeData(Index n)
   generate(begin(vec), end(vec), gen);
   std::iota(index.begin(), index.end(), 0);
   shuffle(begin(index), end(index), mersenne_engine);
+
+  return make_pair(vec, index);
+}
+
+pair<vector<DataType>, vector<Index> > makeDataLocal(Index n, size_t chunk_size)
+{
+  vector<DataType> vec(n);
+  vector<Index> index(n);
+  random_device rnd_device;
+  default_random_engine eng(rnd_device());
+  mt19937 mersenne_engine{ rnd_device() };
+  uniform_real_distribution<> dist(numeric_limits<DataType>::min(),
+                                   numeric_limits<DataType>::max());
+  auto gen = [&dist, &eng]() { return dist(eng); };
+  generate(begin(vec), end(vec), gen);
+  std::iota(index.begin(), index.end(), 0);
+
+  auto steps = (n >= chunk_size) ? n / chunk_size : 1;
+  for (decltype(steps) i = 0; i <= steps; ++i) {
+    auto it = begin(index) + i * chunk_size;
+    auto jt = begin(index) + (i + 1) * chunk_size;
+    if (index.size() < (i + 1) * chunk_size)
+      jt = end(index);
+    shuffle(it, jt, mersenne_engine);
+  }
 
   return make_pair(vec, index);
 }

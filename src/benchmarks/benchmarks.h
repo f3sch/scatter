@@ -5,12 +5,15 @@
 #include <limits>
 #include <vector>
 
-namespace pad::benchmarks {
+namespace pad::benchmarks
+{
 // Define data types
 using DataType = double;
 using Index = unsigned int;
 
-std::pair<std::vector<DataType>, std::vector<Index>> makeData(Index n);
+std::pair<std::vector<DataType>, std::vector<Index> > makeData(Index n);
+std::pair<std::vector<DataType>, std::vector<Index> >
+makeDataLocal(Index n, size_t chunk_size);
 bool cmpFloat(DataType a, DataType b,
               DataType eps = std::numeric_limits<DataType>::epsilon());
 void verifyScatter(std::vector<DataType> inVec, std::vector<Index> index,

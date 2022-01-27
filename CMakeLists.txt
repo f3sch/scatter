@@ -28,7 +28,7 @@ add_subdirectory(src)
 
 
 # Testing and Installing
-option(BUILD_TESTS "Build unit tests." ON)
+option(BUILD_TESTS "Build unit tests." OFF)
 if(BUILD_TESTS)
   add_subdirectory(test)
 endif()
