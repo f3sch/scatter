@@ -43,10 +43,9 @@ BENCHMARK(benchSerialBinningFullyAssociativeRandom)
     ->Apply(pad::benchmarks::benchArgs)
     ->UseRealTime();
 
-static void
-benchSerialBinningFullyAssociativeRandomLocal(benchmark::State &state)
+static void benchSerialBinningFullyAssociativeLocal(benchmark::State &state)
 {
-  auto [vec, index] = pad::benchmarks::makeDataLocal(state.range(0));
+  auto [vec, index] = pad::benchmarks::makeDataLocal(state.range(0), state.range(1));
   pad::benchmarks::DataVec out(state.range(0));
   for (auto _ : state) {
     pad::serial_binning::fully_associative::scatter(out.begin(), vec, index);
@@ -57,9 +56,7 @@ benchSerialBinningFullyAssociativeRandomLocal(benchmark::State &state)
   pad::benchmarks::verifyScatter(vec, index, out);
   pad::benchmarks::benchCounters(state);
 }
-BENCHMARK(benchSerialBinningFullyAssociativeRandomLocal)
-    ->Apply(pad::benchmarks::benchArgs)
-    ->UseRealTime();
+BENCHMARK(benchSerialBinningFullyAssociativeLocal)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
 
 static void benchSerialBinningDirectMappingId(benchmark::State &state)
 {
@@ -102,9 +99,9 @@ BENCHMARK(benchSerialBinningDirectMappingRandom)
     ->Apply(pad::benchmarks::benchArgs)
     ->UseRealTime();
 
-static void benchSerialBinningDirectMappingRandomLocal(benchmark::State &state)
+static void benchSerialBinningDirectMappingLocal(benchmark::State &state)
 {
-  auto [vec, index] = pad::benchmarks::makeDataLocal(state.range(0));
+  auto [vec, index] = pad::benchmarks::makeDataLocal(state.range(0), state.range(1));
   pad::benchmarks::DataVec out(state.range(0));
   for (auto _ : state) {
     pad::serial_binning::direct_mapping::scatter(out.begin(), vec, index);
@@ -115,8 +112,6 @@ static void benchSerialBinningDirectMappingRandomLocal(benchmark::State &state)
   pad::benchmarks::verifyScatter(vec, index, out);
   pad::benchmarks::benchCounters(state);
 }
-BENCHMARK(benchSerialBinningDirectMappingRandomLocal)
-    ->Apply(pad::benchmarks::benchArgs)
-    ->UseRealTime();
+BENCHMARK(benchSerialBinningDirectMappingLocal)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
 
 BENCHMARK_MAIN();

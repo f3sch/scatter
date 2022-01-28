@@ -57,6 +57,16 @@ void benchArgs(benchmark::internal::Benchmark *b)
     b->Args({ 1 << i });
   }
 }
+void benchLocalityArgs(benchmark::internal::Benchmark *b)
+{
+  const auto locality_lowerLimit = 3;
+  const auto locality_uppperLimit = 10;
+  const auto size = 1 << 20;
+  for (auto i = locality_lowerLimit; i <= locality_uppperLimit; ++i) {
+    b->Args({ size, 1 << i });
+  }
+}
+
 
 void benchCounters(benchmark::State &state)
 {
