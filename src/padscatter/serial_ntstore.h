@@ -20,7 +20,7 @@ void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng) {
   auto idxEnd = end(idxRng);
   for (; inIt != inEnd && idxIt != idxEnd; ++inIt, ++idxIt) {
     auto j = *idxIt;
-    assert(0 <= j && j < ranges::size(idxRng));
+    assert(0 <= j && j < ::ranges::size(idxRng));
     __builtin_ia32_movnti64(&outIt[j], *inIt);
   }
 }
