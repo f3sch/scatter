@@ -1,16 +1,15 @@
 #include "benchmarks.h"
-#include "scatter.h"
+#include "serial.h"
 #include <algorithm>
 #include <array>
 #include <benchmark/benchmark.h>
 #include <chrono>
-#include <limits>
-#include <numeric>
-#include <random>
+#include <tbb/parallel_for.h>
 #include <vector>
+#include <iostream>
+#include <range/v3/view/take.hpp>
 
-namespace pad::benchmarks
-{
+namespace pad::benchmarks {
 using namespace std;
 
 pair<vector<DataType>, vector<Index> > makeData(Index n)
@@ -35,13 +34,33 @@ bool cmpFloat(DataType a, DataType b, DataType eps)
   return fabs(a - b) <= eps;
 }
 
-void verifyScatter(vector<DataType> inVec, vector<Index> index,
-                   vector<DataType> out)
-{
-  vector<DataType> correct(inVec.size());
+void verifyScatter(DataVec inVec, IndexVec index,
+                   DataVec out) {
+  DataVec correct(inVec.size());
   pad::serial::scatter(correct.begin(), inVec, index);
   for (Index i = 0; i < inVec.size(); i++) {
     if (!cmpFloat(out[i], correct[i])) {
+      std::cerr << "Output vectors are not equal!" << std::endl;
+      std::cerr << "Indices: ";
+      for (auto &&idx : index | ::ranges::views::take(10)) {
+        std::cerr << idx << ", ";
+      }
+      std::cerr << std::endl;
+      std::cerr << "In: ";
+      for (auto &&val : inVec | ::ranges::views::take(10)) {
+        std::cerr << val << ", ";
+      }
+      std::cerr << std::endl;
+      std::cerr << "Actual: ";
+      for (auto &&val : out | ::ranges::views::take(10)) {
+        std::cerr << val << ", ";
+      }
+      std::cerr << std::endl;
+      std::cerr << "Expected: ";
+      for (auto &&val : correct | ::ranges::views::take(10)) {
+        std::cerr << val << ", ";
+      }
+      std::cerr << std::endl;
       throw runtime_error("Wrong Results");
     }
   }
