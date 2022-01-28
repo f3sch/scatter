@@ -11,6 +11,7 @@
 #include <range/v3/view/chunk.hpp>
 #include <range/v3/view/zip.hpp>
 #include <span>
+#include <random>
 
 namespace pad::serial_binning {
 
