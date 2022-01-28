@@ -10,11 +10,13 @@
 #include <range/v3/size.hpp>
 #include <range/v3/view/chunk.hpp>
 #include <range/v3/view/zip.hpp>
+#include <range/v3/view/take_exactly.hpp>
+#include <range/v3/algorithm/fill.hpp>
 #include <span>
 #include <random>
 
-namespace pad::serial_binning {
-
+namespace pad::serial_binning
+{
 
 namespace detail
 {
@@ -22,12 +24,16 @@ inline constexpr size_t log2(size_t x)
 {
   return __builtin_ctz(x);
 }
-}
+} // namespace detail
 
-template <size_t chunkSize = 1024, size_t binSize = 64, typename OutIt_t, typename InRng_t, typename IdxRng_t>
-void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng) {
+namespace fully_associative
+{
+template <size_t chunkSize = 1024, size_t binSize = 64, typename OutIt_t,
+          typename InRng_t, typename IdxRng_t>
+void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
+{
   using namespace ranges;
-  using namespace ranges::view;
+  using namespace ranges::views;
   using Idx_t = std::ranges::range_value_t<IdxRng_t>;
   using Val_t = std::ranges::range_value_t<InRng_t>;
 
@@ -36,7 +42,7 @@ void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng) {
     Val_t val;
   };
 
-  auto flush = [&](auto &&bin){
+  auto flush = [&](auto &&bin) {
     for (auto &[idx, val] : bin) {
       outIt[idx] = val;
     }
@@ -62,211 +68,263 @@ void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng) {
   Idx_t bin5Tag = empty_tag;
   Idx_t bin6Tag = empty_tag;
   Idx_t bin7Tag = empty_tag;
-  KeyValPair *bin0Begin = bin0.data();
-  KeyValPair *bin1Begin = bin1.data();
-  KeyValPair *bin2Begin = bin2.data();
-  KeyValPair *bin3Begin = bin3.data();
-  KeyValPair *bin4Begin = bin4.data();
-  KeyValPair *bin5Begin = bin5.data();
-  KeyValPair *bin6Begin = bin6.data();
-  KeyValPair *bin7Begin = bin7.data();
-  KeyValPair *bin7End = &*bin7.end();
-  KeyValPair *bin0It = bin0.data();
-  KeyValPair *bin1It = bin1.data();
-  KeyValPair *bin2It = bin2.data();
-  KeyValPair *bin3It = bin3.data();
-  KeyValPair *bin4It = bin4.data();
-  KeyValPair *bin5It = bin5.data();
-  KeyValPair *bin6It = bin6.data();
-  KeyValPair *bin7It = bin7.data();
+  uint_fast8_t bin0FillLevel = 0;
+  uint_fast8_t bin1FillLevel = 0;
+  uint_fast8_t bin2FillLevel = 0;
+  uint_fast8_t bin3FillLevel = 0;
+  uint_fast8_t bin4FillLevel = 0;
+  uint_fast8_t bin5FillLevel = 0;
+  uint_fast8_t bin6FillLevel = 0;
+  uint_fast8_t bin7FillLevel = 0;
 
-  std::uniform_int_distribution dist{0, 7};
-  std::mt19937 random_engine {std::random_device{}()};
+  std::uniform_int_distribution dist{ 0, 7 };
+  std::mt19937 random_engine{ std::random_device{}() };
 
   for (auto &&[valChunk, idxChunk] : zip(valChunks, idxChunks)) {
     for (auto &&[val, idx] : zip(valChunk, idxChunk)) {
       assert(0 <= idx && static_cast<size_t>(idx) < ranges::size(idxRng));
       auto tag = idx >> logBinSize;
       if (tag == bin0Tag) {
-        *bin0It = { idx, val };
-        ++bin0It;
+        bin0[bin0FillLevel] = { idx, val };
+        ++bin0FillLevel;
 
-        if (bin0It == bin1Begin) {
+        if (bin0FillLevel == binSize) {
           flush(bin0);
-          bin0It = bin0Begin;
+          bin0FillLevel = 0;
           bin0Tag = empty_tag;
         }
       } else if (tag == bin1Tag) {
-        *bin1It = { idx, val };
-        ++bin1It;
+        bin1[bin1FillLevel] = { idx, val };
+        ++bin1FillLevel;
 
-        if (bin1It == bin2Begin) {
+        if (bin1FillLevel == binSize) {
           flush(bin1);
-          bin1It = bin1Begin;
+          bin1FillLevel = 1;
           bin1Tag = empty_tag;
         }
       } else if (tag == bin2Tag) {
-        *bin2It = { idx, val };
-        ++bin2It;
+        bin2[bin2FillLevel] = { idx, val };
+        ++bin2FillLevel;
 
-        if (bin2It == bin3Begin) {
+        if (bin2FillLevel == binSize) {
           flush(bin2);
-          bin2It = bin2Begin;
+          bin2FillLevel = 2;
           bin2Tag = empty_tag;
         }
       } else if (tag == bin3Tag) {
-        *bin3It = { idx, val };
-        ++bin3It;
+        bin3[bin3FillLevel] = { idx, val };
+        ++bin3FillLevel;
 
-        if (bin3It == bin4Begin) {
+        if (bin3FillLevel == binSize) {
           flush(bin3);
-          bin3It = bin3Begin;
+          bin3FillLevel = 3;
           bin3Tag = empty_tag;
         }
       } else if (tag == bin4Tag) {
-        *bin4It = { idx, val };
-        ++bin4It;
+        bin4[bin4FillLevel] = { idx, val };
+        ++bin4FillLevel;
 
-        if (bin4It == bin5Begin) {
+        if (bin4FillLevel == binSize) {
           flush(bin4);
-          bin4It = bin4Begin;
+          bin4FillLevel = 4;
           bin4Tag = empty_tag;
         }
       } else if (tag == bin5Tag) {
-        *bin5It = { idx, val };
-        ++bin5It;
+        bin5[bin5FillLevel] = { idx, val };
+        ++bin5FillLevel;
 
-        if (bin5It == bin6Begin) {
+        if (bin5FillLevel == binSize) {
           flush(bin5);
-          bin5It = bin5Begin;
+          bin5FillLevel = 5;
           bin5Tag = empty_tag;
         }
       } else if (tag == bin6Tag) {
-        *bin6It = { idx, val };
-        ++bin6It;
+        bin6[bin6FillLevel] = { idx, val };
+        ++bin6FillLevel;
 
-        if (bin6It == bin7Begin) {
+        if (bin6FillLevel == binSize) {
           flush(bin6);
-          bin6It = bin6Begin;
+          bin6FillLevel = 6;
           bin6Tag = empty_tag;
         }
       } else if (tag == bin7Tag) {
-        *bin7It = { idx, val };
-        ++bin7It;
+        bin7[bin7FillLevel] = { idx, val };
+        ++bin7FillLevel;
 
-        if (bin7It == bin7End) {
+        if (bin7FillLevel == binSize) {
           flush(bin7);
-          bin7It = bin7Begin;
+          bin7FillLevel = 7;
           bin7Tag = empty_tag;
         }
       } else {
-        if (bin0Tag == empty_tag) {
+        if (bin0FillLevel == 0) {
+          bin0[0] = { idx, val };
           bin0Tag = tag;
-          *bin0It = { idx, val };
-          ++bin0It;
-        } else if (bin1Tag == empty_tag) {
+          bin0FillLevel = 1;
+        } else if (bin1FillLevel == 0) {
+          bin1[0] = { idx, val };
           bin1Tag = tag;
-          *bin1It = { idx, val };
-          ++bin1It;
-        } else if (bin2Tag == empty_tag) {
+          bin1FillLevel = 1;
+        } else if (bin2FillLevel == 0) {
+          bin2[0] = { idx, val };
           bin2Tag = tag;
-          *bin2It = { idx, val };
-          ++bin2It;
-        } else if (bin3Tag == empty_tag) {
+          bin2FillLevel = 1;
+        } else if (bin3FillLevel == 0) {
+          bin3[0] = { idx, val };
           bin3Tag = tag;
-          *bin3It = { idx, val };
-          ++bin3It;
-        } else if (bin4Tag == empty_tag) {
+          bin3FillLevel = 1;
+        } else if (bin4FillLevel == 0) {
+          bin4[0] = { idx, val };
           bin4Tag = tag;
-          *bin4It = { idx, val };
-          ++bin4It;
-        } else if (bin5Tag == empty_tag) {
+          bin4FillLevel = 1;
+        } else if (bin5FillLevel == 0) {
+          bin5[0] = { idx, val };
           bin5Tag = tag;
-          *bin5It = { idx, val };
-          ++bin5It;
-        } else if (bin6Tag == empty_tag) {
+          bin5FillLevel = 1;
+        } else if (bin6FillLevel == 0) {
+          bin6[0] = { idx, val };
           bin6Tag = tag;
-          *bin6It = { idx, val };
-          ++bin6It;
-        } else if (bin7Tag == empty_tag) {
+          bin6FillLevel = 1;
+        } else if (bin7FillLevel == 0) {
+          bin7[0] = { idx, val };
           bin7Tag = tag;
-          *bin7It = { idx, val };
-          ++bin7It;
+          bin7FillLevel = 1;
         } else {
           auto randomBin = dist(random_engine);
           if (randomBin == 0) {
-            flush(std::ranges::subrange(bin0Begin, bin0It));
-            bin0It = bin0Begin;
+            flush(ranges::views::take_exactly(bin0, bin0FillLevel));
+            bin0[0] = { idx, val };
             bin0Tag = tag;
-            *bin0It = { idx, val };
-            ++bin0It;
+            bin0FillLevel = 1;
           } else if (randomBin == 1) {
-            flush(std::ranges::subrange(bin1Begin, bin1It));
-            bin1It = bin1Begin;
+            flush(ranges::views::take_exactly(bin1, bin1FillLevel));
+            bin1[0] = { idx, val };
             bin1Tag = tag;
-            *bin1It = { idx, val };
-            ++bin1It;
+            bin1FillLevel = 1;
           } else if (randomBin == 2) {
-            flush(std::ranges::subrange(bin2Begin, bin2It));
-            bin2It = bin2Begin;
+            flush(ranges::views::take_exactly(bin2, bin2FillLevel));
+            bin2[0] = { idx, val };
             bin2Tag = tag;
-            *bin2It = { idx, val };
-            ++bin2It;
+            bin2FillLevel = 1;
           } else if (randomBin == 3) {
-            flush(std::ranges::subrange(bin3Begin, bin3It));
-            bin3It = bin3Begin;
+            flush(ranges::views::take_exactly(bin3, bin3FillLevel));
+            bin3[0] = { idx, val };
             bin3Tag = tag;
-            *bin3It = { idx, val };
-            ++bin3It;
+            bin3FillLevel = 1;
           } else if (randomBin == 4) {
-            flush(std::ranges::subrange(bin4Begin, bin4It));
-            bin4It = bin4Begin;
+            flush(ranges::views::take_exactly(bin4, bin4FillLevel));
+            bin4[0] = { idx, val };
             bin4Tag = tag;
-            *bin4It = { idx, val };
-            ++bin4It;
+            bin4FillLevel = 1;
           } else if (randomBin == 5) {
-            flush(std::ranges::subrange(bin5Begin, bin5It));
-            bin5It = bin5Begin;
+            flush(ranges::views::take_exactly(bin5, bin5FillLevel));
+            bin5[0] = { idx, val };
             bin5Tag = tag;
-            *bin5It = { idx, val };
-            ++bin5It;
+            bin5FillLevel = 1;
           } else if (randomBin == 6) {
-            flush(std::ranges::subrange(bin6Begin, bin6It));
-            bin6It = bin6Begin;
+            flush(ranges::views::take_exactly(bin6, bin6FillLevel));
+            bin6[0] = { idx, val };
             bin6Tag = tag;
-            *bin6It = { idx, val };
-            ++bin6It;
+            bin6FillLevel = 1;
           } else if (randomBin == 7) {
-            flush(std::ranges::subrange(bin7Begin, bin7It));
-            bin7It = bin7Begin;
+            flush(ranges::views::take_exactly(bin7, bin7FillLevel));
+            bin7[0] = { idx, val };
             bin7Tag = tag;
-            *bin7It = { idx, val };
-            ++bin7It;
+            bin7FillLevel = 1;
           }
         }
       }
     }
 
-
-    flush(std::ranges::subrange(bin0Begin, bin0It));
-    flush(std::ranges::subrange(bin1Begin, bin1It));
-    flush(std::ranges::subrange(bin2Begin, bin2It));
-    flush(std::ranges::subrange(bin3Begin, bin3It));
-    flush(std::ranges::subrange(bin4Begin, bin4It));
-    flush(std::ranges::subrange(bin5Begin, bin5It));
-    flush(std::ranges::subrange(bin6Begin, bin6It));
-    flush(std::ranges::subrange(bin7Begin, bin7It));
-    bin0It = bin0Begin;
-    bin1It = bin1Begin;
-    bin2It = bin2Begin;
-    bin3It = bin3Begin;
-    bin4It = bin4Begin;
-    bin5It = bin5Begin;
-    bin6It = bin6Begin;
-    bin7It = bin7Begin;
-
+    flush(ranges::views::take_exactly(bin0, bin0FillLevel));
+    flush(ranges::views::take_exactly(bin1, bin1FillLevel));
+    flush(ranges::views::take_exactly(bin2, bin2FillLevel));
+    flush(ranges::views::take_exactly(bin3, bin3FillLevel));
+    flush(ranges::views::take_exactly(bin4, bin4FillLevel));
+    flush(ranges::views::take_exactly(bin5, bin5FillLevel));
+    flush(ranges::views::take_exactly(bin6, bin6FillLevel));
+    flush(ranges::views::take_exactly(bin7, bin7FillLevel));
+    bin0FillLevel = 0;
+    bin1FillLevel = 0;
+    bin2FillLevel = 0;
+    bin3FillLevel = 0;
+    bin4FillLevel = 0;
+    bin5FillLevel = 0;
+    bin6FillLevel = 0;
+    bin7FillLevel = 0;
   }
 }
-} // namespace pad::serial
+
+} // namespace fully_associative
+
+namespace direct_mapping
+{
+template <size_t chunkSize = 1024, size_t binSize = 64,
+          size_t cacheLineSize = 64, size_t bankCount = 8, typename OutIt_t,
+          typename InRng_t, typename IdxRng_t>
+void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
+{
+  using namespace ranges;
+  using namespace ranges::views;
+  using Idx_t = std::ranges::range_value_t<IdxRng_t>;
+  using Val_t = std::ranges::range_value_t<InRng_t>;
+
+  auto flush = [&](auto &&idxArray, auto &&valArray, size_t count) {
+    for (size_t i = 0; i < count; ++i) {
+      outIt[idxArray[i]] = valArray[i];
+    }
+  };
+
+  static constexpr auto logBinSize = pad::serial_binning::detail::log2(binSize);
+  static constexpr auto bankMask =
+      bankCount - 1; // e.g. 8 - 1 == 7 == 0b00000111
+  auto valChunks = chunk(inRng, chunkSize);
+  auto idxChunks = chunk(idxRng, chunkSize);
+
+  for (auto &&[valChunk, idxChunk] : zip(valChunks, idxChunks)) {
+    auto valCache = std::array<std::array<Val_t, cacheLineSize>, bankCount>{};
+    auto idxCache = std::array<std::array<Idx_t, cacheLineSize>, bankCount>{};
+    auto cacheFillLevels = std::array<size_t, bankCount>{};
+    auto cacheTags = std::array<size_t, bankCount>{};
+
+    for (auto &&[val, idx] : zip(valChunk, idxChunk)) {
+      assert(0 <= idx && static_cast<size_t>(idx) < ranges::size(idxRng));
+      auto tag = idx >> logBinSize;
+      auto bank = idx & bankMask;
+
+      auto cacheTag = cacheTags[bank];
+      auto fillLevel = cacheFillLevels[bank];
+      if (fillLevel == 0) {
+        idxCache[bank][0] = idx;
+        valCache[bank][0] = val;
+        cacheFillLevels[bank] = 1;
+        cacheTags[bank] = tag;
+      } else if (cacheTag != tag) {
+        flush(idxCache[bank], valCache[bank], fillLevel);
+        idxCache[bank][0] = idx;
+        valCache[bank][0] = val;
+        cacheFillLevels[bank] = 1;
+        cacheTags[bank] = tag;
+      } else {
+        idxCache[bank][fillLevel] = idx;
+        valCache[bank][fillLevel] = val;
+        ++cacheFillLevels[bank];
+
+        if (fillLevel == cacheLineSize) {
+          flush(idxCache[bank], valCache[bank], fillLevel);
+          cacheFillLevels[bank] = 0;
+        }
+      }
+    }
+
+    for (size_t i = 0; i < bankCount; ++i) {
+      flush(idxCache[i], valCache[i], cacheFillLevels[i]);
+    }
+  }
+}
+
+} // namespace direct_mapping
+
+} // namespace pad::serial_binning
 
 #endif //SERIAL_BINNING_H
