@@ -5,9 +5,14 @@
 #include <vector>
 #include "benchmarks.h"
 
-// not sure how to test this
+using namespace pad::benchmarks;
+
 TEST(bench, locality)
 {
-  using namespace pad::benchmarks;
   auto [_data, index] = makeDataLocal(100, 42);
+}
+
+TEST(bench, simul)
+{
+  auto [_data, index] = makeDataLocal(100, 42, 0.7);
 }
