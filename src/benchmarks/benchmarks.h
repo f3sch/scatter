@@ -20,6 +20,19 @@ using Vec = std::vector<T, tbb::cache_aligned_allocator<T> >;
 using DataVec = std::vector<DataType, tbb::cache_aligned_allocator<DataType> >;
 using IndexVec = std::vector<Index, tbb::cache_aligned_allocator<Index> >;
 
+template <typename DataType> inline auto distribution()
+{
+  if constexpr (std::is_floating_point<DataType>::value) {
+    return std::uniform_real_distribution<>(
+        std::numeric_limits<DataType>::min(),
+        std::numeric_limits<DataType>::max());
+  } else {
+    return std::uniform_int_distribution<>(
+        std::numeric_limits<DataType>::min(),
+        std::numeric_limits<DataType>::max());
+  }
+}
+
 template <typename DataType = double, typename Index = size_t>
 std::pair<Vec<DataType>, Vec<Index> > makeData(size_t n)
 {
@@ -28,8 +41,7 @@ std::pair<Vec<DataType>, Vec<Index> > makeData(size_t n)
   std::random_device rnd_device;
   std::default_random_engine eng(rnd_device());
   std::mt19937 mersenne_engine{ rnd_device() };
-  std::uniform_real_distribution<> dist(std::numeric_limits<DataType>::min(),
-                                        std::numeric_limits<DataType>::max());
+  auto dist = distribution<DataType>();
   auto gen = [&dist, &eng]() { return dist(eng); };
   generate(begin(vec), end(vec), gen);
   std::iota(index.begin(), index.end(), 0);

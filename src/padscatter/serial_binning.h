@@ -34,8 +34,8 @@ void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
 {
   using namespace ranges;
   using namespace ranges::views;
-  using Idx_t = std::ranges::range_value_t<IdxRng_t>;
-  using Val_t = std::ranges::range_value_t<InRng_t>;
+  using Idx_t = ::ranges::range_value_t<IdxRng_t>;
+  using Val_t = ::ranges::range_value_t<InRng_t>;
 
   struct KeyValPair {
     Idx_t idx;
@@ -266,8 +266,8 @@ void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
 {
   using namespace ranges;
   using namespace ranges::views;
-  using Idx_t = std::ranges::range_value_t<IdxRng_t>;
-  using Val_t = std::ranges::range_value_t<InRng_t>;
+  using Idx_t = ::ranges::range_value_t<IdxRng_t>;
+  using Val_t = ::ranges::range_value_t<InRng_t>;
 
   auto flush = [&](auto &&idxArray, auto &&valArray, size_t count) {
     for (size_t i = 0; i < count; ++i) {
