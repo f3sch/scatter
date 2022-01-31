@@ -50,8 +50,8 @@ std::pair<Vec<DataType>, Vec<Index> > makeData(size_t n)
 }
 
 template <typename DataType = double, typename Index = size_t>
-std::pair<Vec<DataType>, Vec<Index> > makeDataLocal(size_t n, size_t chunk_size,
-                                                    double prob = 1.0)
+std::pair<Vec<DataType>, Vec<Index> >
+makeDataLocal(size_t n, size_t chunk_size = 1024, double prob = 1.0)
 {
   Vec<DataType> vec(n);
   Vec<Index> index(n);

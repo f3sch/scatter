@@ -3,7 +3,8 @@
 #include <benchmark/benchmark.h>
 #include <vector>
 
-static void benchCopy(benchmark::State &state) {
+static void benchCopy(benchmark::State &state)
+{
   auto N = state.range(0);
   pad::benchmarks::DataVec vec(N);
   pad::benchmarks::IndexVec index(N);
@@ -23,7 +24,8 @@ static void benchCopy(benchmark::State &state) {
 }
 BENCHMARK(benchCopy)->Apply(pad::benchmarks::benchArgs)->UseRealTime();
 
-static void benchSerialSimpleId(benchmark::State &state) {
+static void benchSerialSimpleId(benchmark::State &state)
+{
   auto N = state.range(0);
   pad::benchmarks::DataVec vec(N);
   pad::benchmarks::IndexVec index(N);
@@ -57,4 +59,22 @@ static void benchSerialSimple(benchmark::State &state)
   pad::benchmarks::benchCounters(state);
 }
 BENCHMARK(benchSerialSimple)->Apply(pad::benchmarks::benchArgs)->UseRealTime();
+
+static void benchSerialSimpleLocal(benchmark::State &state)
+{
+  auto [vec, index] = pad::benchmarks::makeDataLocal(state.range(0));
+  pad::benchmarks::DataVec out(state.range(0));
+  for (auto _ : state) {
+    pad::serial::scatter(out.begin(), vec, index);
+    benchmark::DoNotOptimize(vec.data());
+    benchmark::DoNotOptimize(index.data());
+    benchmark::ClobberMemory();
+  }
+  // verifyScatter(vec, index, out);
+  pad::benchmarks::benchCounters(state);
+}
+BENCHMARK(benchSerialSimpleLocal)
+    ->Apply(pad::benchmarks::benchArgs)
+    ->UseRealTime();
+
 BENCHMARK_MAIN();
