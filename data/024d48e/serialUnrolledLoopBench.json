@@ -1,0 +1,38 @@
+{
+  "context": {
+    "date": "2022-01-31T12:36:52+01:00",
+    "host_name": "ziti-rome0.ziti.uni-heidelberg.de",
+    "executable": "./serialUnrolledLoopBench",
+    "num_cpus": 128,
+    "mhz_per_cpu": 1596,
+    "cpu_scaling_enabled": false,
+    "caches": [
+      {
+        "type": "Data",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Instruction",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 2,
+        "size": 524288,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 3,
+        "size": 16777216,
+        "num_sharing": 8
+      }
+    ],
+    "load_avg": [0.87,0.32,0.17],
+    "library_build_type": "release"
+  },
+  "benchmarks": [

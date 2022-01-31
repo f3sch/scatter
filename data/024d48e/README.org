@@ -1,0 +1,26 @@
+#+TITLE: Readme
+
+* General
+Benchmarked on _rome_.
+Built with g++.
+
+
+* Plots
+=Local Data should always be faster to process.=
+=I compared to the prevoius Commit 2ed9825.=
+[[file:serialBench.png]]
+[[file:serialNTStore.png]]
+[[file:stlBench.png]]
+[[file:tbbPresortBench.png]]
+[[file:tbbSimpleBench.png]]
+
+There is no real improvement visible using cache_aligned allocators.
+They probably already aligned anyways.
+
+* Notes
+- the data is now cache aligned
+- there are benchmarks for local data
+- serialSimd crashed without avx512 instructions
+- serialUnrolledLoop throws with wrong results
+- for both the core crashes are included
+- I canceled the *ScanBench as they are ridiculously slow
