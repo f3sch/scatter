@@ -61,11 +61,15 @@ void benchArgs(benchmark::internal::Benchmark *b)
 void benchCounters(benchmark::State &state)
 {
   state.counters["Elements"] = state.range(0);
-  auto GOPS = int64_t(state.iterations()) * int64_t(state.range(0));
-  state.counters["GOPS"] = GOPS;
-  state.counters["GOPSperIter"] = GOPS / state.iterations();
+  // Scatter: y[idx[i]] = x[i]
+  // is comprised of reading idx[i], x[i] and writing to y[idx[i]]
+  // 3 operations
+  // GOP has to be divided by the time to get GOPS
+  auto GOP = int64_t(state.iterations()) * int64_t(state.range(0)) * 3;
+  state.counters["GOP"] = GOP;
+  state.counters["GOPperIter"] = GOP / state.iterations();
   state.counters["Bytes_processed"] =
-      2 * state.range(0) * sizeof(DataType) + sizeof(Index);
+      state.range(0) * (2 * sizeof(DataType) + sizeof(Index));
 }
 
 } // namespace pad::benchmarks
