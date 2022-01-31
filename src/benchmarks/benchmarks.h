@@ -27,9 +27,8 @@ template <typename DataType> inline auto distribution()
         std::numeric_limits<DataType>::min(),
         std::numeric_limits<DataType>::max());
   } else {
-    return std::uniform_int_distribution<>(
-        std::numeric_limits<DataType>::min(),
-        std::numeric_limits<DataType>::max());
+    return std::uniform_int_distribution<int>(std::numeric_limits<int>::min(),
+                                              std::numeric_limits<int>::max());
   }
 }
 
