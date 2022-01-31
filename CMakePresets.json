@@ -9,7 +9,7 @@
     {
       "name": "local",
       "displayName": "Default Configuration for local development",
-      "generator": "Unix Makefiles",
+      "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/local",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
@@ -22,12 +22,12 @@
     {
       "name": "release",
       "displayName": "Default ASC Configuration",
-      "generator": "Unix Makefiles",
+      "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_CXX_FLAGS": "-march=native",
-        "CMAKE_CXX_COMPILER": "clang++"
+        "CMAKE_CXX_COMPILER": "g++"
       }
     },
     {
