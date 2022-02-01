@@ -58,6 +58,21 @@ static void benchSerialBinningFullyAssociativeLocal(benchmark::State &state)
 }
 BENCHMARK(benchSerialBinningFullyAssociativeLocal)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
 
+static void benchSerialBinningFullyAssociativeLocal2(benchmark::State &state)
+{
+  auto [vec, index] = pad::benchmarks::makeDataLocal(state.range(0), state.range(1));
+  pad::benchmarks::DataVec out(state.range(0));
+  for (auto _ : state) {
+    pad::serial_binning::fully_associative::scatter<16384, 1024>(out.begin(), vec, index);
+    benchmark::DoNotOptimize(vec.data());
+    benchmark::DoNotOptimize(index.data());
+    benchmark::ClobberMemory();
+  }
+  pad::benchmarks::verifyScatter(vec, index, out);
+  pad::benchmarks::benchCounters(state);
+}
+BENCHMARK(benchSerialBinningFullyAssociativeLocal2)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
+
 static void benchSerialBinningDirectMappingId(benchmark::State &state)
 {
   auto N = state.range(0);
@@ -113,5 +128,50 @@ static void benchSerialBinningDirectMappingLocal(benchmark::State &state)
   pad::benchmarks::benchCounters(state);
 }
 BENCHMARK(benchSerialBinningDirectMappingLocal)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
+
+static void benchSerialBinningDirectMappingLocal2(benchmark::State &state)
+{
+  auto [vec, index] = pad::benchmarks::makeDataLocal(state.range(0), state.range(1));
+  pad::benchmarks::DataVec out(state.range(0));
+  for (auto _ : state) {
+    pad::serial_binning::direct_mapping::scatter<16384, 1024, 1024, 8>(out.begin(), vec, index);
+    benchmark::DoNotOptimize(vec.data());
+    benchmark::DoNotOptimize(index.data());
+    benchmark::ClobberMemory();
+  }
+  pad::benchmarks::verifyScatter(vec, index, out);
+  pad::benchmarks::benchCounters(state);
+}
+BENCHMARK(benchSerialBinningDirectMappingLocal2)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
+
+static void benchSerialBinningDirectMappingLocal3(benchmark::State &state)
+{
+  auto [vec, index] = pad::benchmarks::makeDataLocal(state.range(0), state.range(1));
+  pad::benchmarks::DataVec out(state.range(0));
+  for (auto _ : state) {
+    pad::serial_binning::direct_mapping::scatter<16384, 1024, 64, 64>(out.begin(), vec, index);
+    benchmark::DoNotOptimize(vec.data());
+    benchmark::DoNotOptimize(index.data());
+    benchmark::ClobberMemory();
+  }
+  pad::benchmarks::verifyScatter(vec, index, out);
+  pad::benchmarks::benchCounters(state);
+}
+BENCHMARK(benchSerialBinningDirectMappingLocal3)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
+
+static void benchSerialBinningDirectMappingLocal4(benchmark::State &state)
+{
+  auto [vec, index] = pad::benchmarks::makeDataLocal(state.range(0), state.range(1));
+  pad::benchmarks::DataVec out(state.range(0));
+  for (auto _ : state) {
+    pad::serial_binning::direct_mapping::scatter<16384, 1024, 1024, 64>(out.begin(), vec, index);
+    benchmark::DoNotOptimize(vec.data());
+    benchmark::DoNotOptimize(index.data());
+    benchmark::ClobberMemory();
+  }
+  pad::benchmarks::verifyScatter(vec, index, out);
+  pad::benchmarks::benchCounters(state);
+}
+BENCHMARK(benchSerialBinningDirectMappingLocal4)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
 
 BENCHMARK_MAIN();
