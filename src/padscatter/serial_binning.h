@@ -312,7 +312,9 @@ void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
   auto flush = [&](auto &&idxArray, auto &&valArray, size_t count) {
     for (size_t i = 0; i < count; ++i) {
       outIt[idxArray[i]] = valArray[i];
+      LOG(std::cout << idxArray[i] << ", ");
     }
+    LOG(std::cout << std::endl);
   };
 
   static constexpr auto logBinSize = pad::serial_binning::detail::log2(binSize);
@@ -353,7 +355,7 @@ void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
         LOG(std::cout << "idx: " << idx << ", tag: " << tag << " into bank " << bank << ", " << (size_t)cacheFillLevels[bank] << "/" << binSize << std::endl);
 
         if (fillLevel == cacheLineSize - 1) { // -1 because fillLevel is the old value but lives in a register. As cacheLineSize is a compiletime value it's faster this way than comparing cacheFillLevels[bank] #prematureoptimization
-          flush(idxCache[bank], valCache[bank], fillLevel);
+          flush(idxCache[bank], valCache[bank], cacheLineSize);
           cacheFillLevels[bank] = 0;
           LOG(std::cout << "Bank full. Flushed." << std::endl);
         }
