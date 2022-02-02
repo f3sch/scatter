@@ -9,10 +9,10 @@ using namespace pad::benchmarks;
 
 TEST(bench, locality)
 {
-  auto [_data, index] = makeDataLocal(100, 42);
+  auto [_data, index] = makeChunkedPermutation(100, 42);
 }
 
 TEST(bench, simul)
 {
-  auto [_data, index] = makeDataLocal(100, 42, 0.7);
+  auto [_data, index] = makeChunkedPermutation(100, 42, 0.7);
 }

@@ -60,8 +60,9 @@ static void benchSerialSimpleRandom(benchmark::State &state)
 }
 BENCHMARK(benchSerialSimpleRandom)->Apply(pad::benchmarks::benchArgs)->UseRealTime();
 
-static void benchSerialSimpleLocal(benchmark::State &state) {
-  auto [vec, index] = pad::benchmarks::makeDataLocal(state.range(0), state.range(1));
+static void benchSerialSimpleChunkedPermutation(benchmark::State &state)
+{
+  auto [vec, index] = pad::benchmarks::makeChunkedPermutation(state.range(0), state.range(1));
   pad::benchmarks::DataVec out(state.range(0));
   for (auto _ : state) {
     pad::serial::scatter(out.begin(), vec, index);
@@ -72,6 +73,21 @@ static void benchSerialSimpleLocal(benchmark::State &state) {
   pad::benchmarks::verifyScatter(vec, index, out);
   pad::benchmarks::benchCounters(state);
 }
-BENCHMARK(benchSerialSimpleLocal)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
+BENCHMARK(benchSerialSimpleChunkedPermutation)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
+
+static void benchSerialSimpleNormalDistributedShuffle(benchmark::State &state)
+{
+  auto [vec, index] = pad::benchmarks::makeNormalDistributedShuffle(state.range(0), state.range(1));
+  pad::benchmarks::DataVec out(state.range(0));
+  for (auto _ : state) {
+    pad::serial::scatter(out.begin(), vec, index);
+    benchmark::DoNotOptimize(vec.data());
+    benchmark::DoNotOptimize(index.data());
+    benchmark::ClobberMemory();
+  }
+  pad::benchmarks::verifyScatter(vec, index, out);
+  pad::benchmarks::benchCounters(state);
+}
+BENCHMARK(benchSerialSimpleNormalDistributedShuffle)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
 
 BENCHMARK_MAIN();

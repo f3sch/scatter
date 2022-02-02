@@ -43,9 +43,9 @@ BENCHMARK(benchSerialBinningFullyAssociativeRandom)
     ->Apply(pad::benchmarks::benchArgs)
     ->UseRealTime();
 
-static void benchSerialBinningFullyAssociativeLocal(benchmark::State &state)
+static void benchSerialBinningFullyAssociativeChunkedPermutation(benchmark::State &state)
 {
-  auto [vec, index] = pad::benchmarks::makeDataLocal(state.range(0), state.range(1));
+  auto [vec, index] = pad::benchmarks::makeChunkedPermutation(state.range(0), state.range(1));
   pad::benchmarks::DataVec out(state.range(0));
   for (auto _ : state) {
     pad::serial_binning::fully_associative::scatter(out.begin(), vec, index);
@@ -56,11 +56,26 @@ static void benchSerialBinningFullyAssociativeLocal(benchmark::State &state)
   pad::benchmarks::verifyScatter(vec, index, out);
   pad::benchmarks::benchCounters(state);
 }
-BENCHMARK(benchSerialBinningFullyAssociativeLocal)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
+BENCHMARK(benchSerialBinningFullyAssociativeChunkedPermutation)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
 
-static void benchSerialBinningFullyAssociativeLocal2(benchmark::State &state)
+static void benchSerialBinningFullyAssociativeNormalDistributedShuffle(benchmark::State &state)
 {
-  auto [vec, index] = pad::benchmarks::makeDataLocal(state.range(0), state.range(1));
+  auto [vec, index] = pad::benchmarks::makeNormalDistributedShuffle(state.range(0), state.range(1));
+  pad::benchmarks::DataVec out(state.range(0));
+  for (auto _ : state) {
+    pad::serial_binning::fully_associative::scatter(out.begin(), vec, index);
+    benchmark::DoNotOptimize(vec.data());
+    benchmark::DoNotOptimize(index.data());
+    benchmark::ClobberMemory();
+  }
+  pad::benchmarks::verifyScatter(vec, index, out);
+  pad::benchmarks::benchCounters(state);
+}
+BENCHMARK(benchSerialBinningFullyAssociativeNormalDistributedShuffle)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
+
+static void benchSerialBinningFullyAssociativeNormalDistributedShuffle2(benchmark::State &state)
+{
+  auto [vec, index] = pad::benchmarks::makeNormalDistributedShuffle(state.range(0), state.range(1));
   pad::benchmarks::DataVec out(state.range(0));
   for (auto _ : state) {
     pad::serial_binning::fully_associative::scatter<16384, 1024>(out.begin(), vec, index);
@@ -71,7 +86,7 @@ static void benchSerialBinningFullyAssociativeLocal2(benchmark::State &state)
   pad::benchmarks::verifyScatter(vec, index, out);
   pad::benchmarks::benchCounters(state);
 }
-BENCHMARK(benchSerialBinningFullyAssociativeLocal2)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
+BENCHMARK(benchSerialBinningFullyAssociativeNormalDistributedShuffle2)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
 
 static void benchSerialBinningDirectMappingId(benchmark::State &state)
 {
@@ -114,9 +129,9 @@ BENCHMARK(benchSerialBinningDirectMappingRandom)
     ->Apply(pad::benchmarks::benchArgs)
     ->UseRealTime();
 
-static void benchSerialBinningDirectMappingLocal(benchmark::State &state)
+static void benchSerialBinningDirectMappingChunkedPermutation(benchmark::State &state)
 {
-  auto [vec, index] = pad::benchmarks::makeDataLocal(state.range(0), state.range(1));
+  auto [vec, index] = pad::benchmarks::makeChunkedPermutation(state.range(0), state.range(1));
   pad::benchmarks::DataVec out(state.range(0));
   for (auto _ : state) {
     pad::serial_binning::direct_mapping::scatter(out.begin(), vec, index);
@@ -127,11 +142,25 @@ static void benchSerialBinningDirectMappingLocal(benchmark::State &state)
   pad::benchmarks::verifyScatter(vec, index, out);
   pad::benchmarks::benchCounters(state);
 }
-BENCHMARK(benchSerialBinningDirectMappingLocal)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
+BENCHMARK(benchSerialBinningDirectMappingChunkedPermutation)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
 
-static void benchSerialBinningDirectMappingLocal2(benchmark::State &state)
+static void benchSerialBinningDirectMappingNormalDistributedShuffle(benchmark::State &state)
 {
-  auto [vec, index] = pad::benchmarks::makeDataLocal(state.range(0), state.range(1));
+  auto [vec, index] = pad::benchmarks::makeNormalDistributedShuffle(state.range(0), state.range(1));
+  pad::benchmarks::DataVec out(state.range(0));
+  for (auto _ : state) {
+    pad::serial_binning::direct_mapping::scatter(out.begin(), vec, index);
+    benchmark::DoNotOptimize(vec.data());
+    benchmark::DoNotOptimize(index.data());
+    benchmark::ClobberMemory();
+  }
+  pad::benchmarks::verifyScatter(vec, index, out);
+  pad::benchmarks::benchCounters(state);
+}
+BENCHMARK(benchSerialBinningDirectMappingNormalDistributedShuffle)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
+
+static void benchSerialBinningDirectMappingNormalDistributedShuffle2(benchmark::State &state) {
+  auto [vec, index] = pad::benchmarks::makeNormalDistributedShuffle(state.range(0), state.range(1));
   pad::benchmarks::DataVec out(state.range(0));
   for (auto _ : state) {
     pad::serial_binning::direct_mapping::scatter<16384, 1024, 1024, 8>(out.begin(), vec, index);
@@ -142,11 +171,11 @@ static void benchSerialBinningDirectMappingLocal2(benchmark::State &state)
   pad::benchmarks::verifyScatter(vec, index, out);
   pad::benchmarks::benchCounters(state);
 }
-BENCHMARK(benchSerialBinningDirectMappingLocal2)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
+BENCHMARK(benchSerialBinningDirectMappingNormalDistributedShuffle2)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
 
-static void benchSerialBinningDirectMappingLocal3(benchmark::State &state)
+static void benchSerialBinningDirectMappingNormalDistributedShuffle3(benchmark::State &state)
 {
-  auto [vec, index] = pad::benchmarks::makeDataLocal(state.range(0), state.range(1));
+  auto [vec, index] = pad::benchmarks::makeNormalDistributedShuffle(state.range(0), state.range(1));
   pad::benchmarks::DataVec out(state.range(0));
   for (auto _ : state) {
     pad::serial_binning::direct_mapping::scatter<16384, 1024, 64, 64>(out.begin(), vec, index);
@@ -157,11 +186,11 @@ static void benchSerialBinningDirectMappingLocal3(benchmark::State &state)
   pad::benchmarks::verifyScatter(vec, index, out);
   pad::benchmarks::benchCounters(state);
 }
-BENCHMARK(benchSerialBinningDirectMappingLocal3)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
+BENCHMARK(benchSerialBinningDirectMappingNormalDistributedShuffle3)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
 
-static void benchSerialBinningDirectMappingLocal4(benchmark::State &state)
+static void benchSerialBinningDirectMappingNormalDistributedShuffle4(benchmark::State &state)
 {
-  auto [vec, index] = pad::benchmarks::makeDataLocal(state.range(0), state.range(1));
+  auto [vec, index] = pad::benchmarks::makeNormalDistributedShuffle(state.range(0), state.range(1));
   pad::benchmarks::DataVec out(state.range(0));
   for (auto _ : state) {
     pad::serial_binning::direct_mapping::scatter<16384, 1024, 1024, 64>(out.begin(), vec, index);
@@ -172,6 +201,6 @@ static void benchSerialBinningDirectMappingLocal4(benchmark::State &state)
   pad::benchmarks::verifyScatter(vec, index, out);
   pad::benchmarks::benchCounters(state);
 }
-BENCHMARK(benchSerialBinningDirectMappingLocal4)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
+BENCHMARK(benchSerialBinningDirectMappingNormalDistributedShuffle4)->Apply(pad::benchmarks::benchLocalityArgs)->UseRealTime();
 
 BENCHMARK_MAIN();

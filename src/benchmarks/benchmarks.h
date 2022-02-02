@@ -51,7 +51,7 @@ std::pair<Vec<DataType>, Vec<Index> > makeData(size_t n)
 
 template <typename DataType = double, typename Index = size_t>
 std::pair<Vec<DataType>, Vec<Index> >
-makeDataLocal(size_t n, size_t chunk_size = 1024, double prob = 1.0)
+makeChunkedPermutation(size_t n, size_t chunk_size = 1024, double prob = 1.0)
 {
   Vec<DataType> vec(n);
   Vec<Index> index(n);
@@ -76,6 +76,33 @@ makeDataLocal(size_t n, size_t chunk_size = 1024, double prob = 1.0)
     if (index.size() < (i + 1) * chunk_size)
       jt = end(index);
     shuffle(it, jt, mersenne_engine);
+  }
+
+  return make_pair(vec, index);
+}
+
+
+template <typename DataType = double, typename Index = size_t>
+std::pair<Vec<DataType>, Vec<Index> > makeNormalDistributedShuffle(size_t n, size_t distance,
+                                                    double prob = 1.0)
+{
+  Vec<DataType> vec(n);
+  Vec<Index> index(n);
+  std::random_device rnd_device;
+  std::default_random_engine eng(rnd_device());
+  std::mt19937 mersenne_engine{ rnd_device() };
+  std::uniform_real_distribution<> dist(std::numeric_limits<DataType>::min(),
+                                        std::numeric_limits<DataType>::max());
+  std::normal_distribution<> shuffle_dist(0.0, distance);
+  auto gen = [&dist, &eng]() { return dist(eng); };
+  generate(begin(vec), end(vec), gen);
+  std::iota(index.begin(), index.end(), 0);
+
+  // shuffle data only in chunks, should more accuratley reflect
+  // real situations, also some chunks can be skipped, adjust with prob
+  for (size_t i = 0; i < n; ++i) {
+    auto j = static_cast<size_t>((static_cast<std::ptrdiff_t>(shuffle_dist(mersenne_engine)) % n + n) % n);
+    std::swap(index[i], index[j]);
   }
 
   return make_pair(vec, index);
