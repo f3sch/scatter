@@ -36,14 +36,15 @@ inline constexpr size_t log2(size_t x)
 
 namespace fully_associative
 {
+
 template <size_t chunkSize = 1024, size_t binSize = 64, typename OutIt_t,
-          typename InRng_t, typename IdxRng_t>
-void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
+    typename ZipRng_t>
+void scatter(OutIt_t outIt, const ZipRng_t &zipRng)
 {
   using namespace ranges;
   using namespace ranges::views;
-  using Idx_t = ::ranges::range_value_t<IdxRng_t>;
-  using Val_t = ::ranges::range_value_t<InRng_t>;
+  using Val_t = std::decay_t<decltype(std::get<0>(*zipRng.begin()))>;
+  using Idx_t = std::decay_t<decltype(std::get<1>(*zipRng.begin()))>;
 
   struct KeyValPair {
     Idx_t idx;
@@ -58,8 +59,7 @@ void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
 
   static constexpr Idx_t empty_tag = std::numeric_limits<Idx_t>::max();
   static constexpr auto logBinSize = detail::log2(binSize);
-  auto valChunks = chunk(inRng, chunkSize);
-  auto idxChunks = chunk(idxRng, chunkSize);
+  auto chunks = chunk(zipRng, chunkSize);
   auto bin0 = std::array<KeyValPair, binSize>{};
   auto bin1 = std::array<KeyValPair, binSize>{};
   auto bin2 = std::array<KeyValPair, binSize>{};
@@ -88,8 +88,8 @@ void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
   std::uniform_int_distribution dist{ 0, 7 };
   std::mt19937 random_engine{ std::random_device{}() };
 
-  for (auto &&[valChunk, idxChunk] : zip(valChunks, idxChunks)) {
-    for (auto &&[val, idx] : zip(valChunk, idxChunk)) {
+  for (const auto &chunk : chunks) {
+    for (const auto &[val, idx] : chunk) {
       assert(0 <= idx && static_cast<size_t>(idx) < ranges::size(idxRng));
       auto tag = idx >> logBinSize;
       if (tag == bin0Tag) {
@@ -295,19 +295,27 @@ void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
   }
 }
 
+template <size_t chunkSize = 1024, size_t binSize = 64, typename OutIt_t,
+    typename InRng_t, typename IdxRng_t>
+void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
+{
+  scatter<chunkSize, binSize>(outIt, ranges::views::zip(inRng, idxRng));
+}
+
 } // namespace fully_associative
 
 namespace direct_mapping
 {
+
 template <size_t chunkSize = 1024, size_t binSize = 64,
-          size_t cacheLineSize = 64, size_t bankCount = 8, typename OutIt_t,
-          typename InRng_t, typename IdxRng_t>
-void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
+    size_t cacheLineSize = 64, size_t bankCount = 8, typename OutIt_t,
+    typename ZipRng_t>
+void scatter(OutIt_t outIt, const ZipRng_t &zipRng)
 {
   using namespace ranges;
   using namespace ranges::views;
-  using Idx_t = ::ranges::range_value_t<IdxRng_t>;
-  using Val_t = ::ranges::range_value_t<InRng_t>;
+  using Val_t = std::decay_t<decltype(std::get<0>(*zipRng.begin()))>;
+  using Idx_t = std::decay_t<decltype(std::get<1>(*zipRng.begin()))>;
 
   auto flush = [&](auto &&idxArray, auto &&valArray, size_t count) {
     for (size_t i = 0; i < count; ++i) {
@@ -319,16 +327,15 @@ void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
 
   static constexpr auto logBinSize = pad::serial_binning::detail::log2(binSize);
   static constexpr auto bankMask = bankCount - 1; // e.g. 8 - 1 == 7 == 0b00000111
-  auto valChunks = chunk(inRng, chunkSize);
-  auto idxChunks = chunk(idxRng, chunkSize);
+  auto chunks = chunk(zipRng, chunkSize);
 
-  for (auto &&[valChunk, idxChunk] : zip(valChunks, idxChunks)) {
+  for (auto &&chunk : chunks) {
     auto valCache = std::array<std::array<Val_t, cacheLineSize>, bankCount>{};
     auto idxCache = std::array<std::array<Idx_t, cacheLineSize>, bankCount>{};
     auto cacheFillLevels = std::array<size_t, bankCount>{};
     auto cacheTags = std::array<size_t, bankCount>{};
 
-    for (auto &&[val, idx] : zip(valChunk, idxChunk)) {
+    for (auto &&[val, idx] : chunk) {
       assert(0 <= idx && static_cast<size_t>(idx) < ranges::size(idxRng));
       auto tag = idx >> logBinSize;
       auto bank = tag & bankMask;
@@ -366,6 +373,14 @@ void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
       flush(idxCache[i], valCache[i], cacheFillLevels[i]);
     }
   }
+}
+
+template <size_t chunkSize = 1024, size_t binSize = 64,
+    size_t cacheLineSize = 64, size_t bankCount = 8, typename OutIt_t,
+    typename InRng_t, typename IdxRng_t>
+void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
+{
+  scatter<chunkSize, binSize, cacheLineSize, bankCount>(outIt, ranges::views::zip(inRng, idxRng));
 }
 
 } // namespace direct_mapping
