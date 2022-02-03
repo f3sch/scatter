@@ -10,15 +10,44 @@
 
 #include <tbb/cache_aligned_allocator.h>
 
+
+template <typename T, typename A = std::allocator<T>>
+class default_init_allocator : public A
+{
+	// Implementation taken from https://stackoverflow.com/a/21028912.
+	public:
+		using A::A;
+
+		template <typename U>
+			struct rebind
+			{
+				using other = default_init_allocator<U, typename std::allocator_traits<A>::template rebind_alloc<U>>;
+			};
+
+		template <typename U>
+			void
+			construct(U* ptr)
+			noexcept(std::is_nothrow_default_constructible<U>::value)
+			{
+				::new(static_cast<void*>(ptr)) U;
+			}
+		template <typename U, typename...ArgsT>
+			void
+			construct(U* ptr, ArgsT&&... args)
+			{
+				std::allocator_traits<A>::construct(static_cast<A&>(*this), ptr, std::forward<ArgsT>(args)...);
+			}
+};
+
 namespace pad::benchmarks
 {
 // Define data types
 using DataType = double;
 using Index = size_t;
 template <typename T>
-using Vec = std::vector<T, tbb::cache_aligned_allocator<T> >;
-using DataVec = std::vector<DataType, tbb::cache_aligned_allocator<DataType> >;
-using IndexVec = std::vector<Index, tbb::cache_aligned_allocator<Index> >;
+using Vec = std::vector<T, default_init_allocator<T, tbb::cache_aligned_allocator<T>> >;
+using DataVec = std::vector<DataType, default_init_allocator<DataType, tbb::cache_aligned_allocator<DataType>> >;
+using IndexVec = std::vector<Index, default_init_allocator<Index, tbb::cache_aligned_allocator<Index>> >;
 
 template <typename DataType> inline auto distribution()
 {
