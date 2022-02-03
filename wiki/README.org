@@ -1,9 +1,9 @@
 #+TITLE: Readme
-#+AUTHOR: Felix Schlepper
 #+OPTIONS: toc:2
 
 * Scatter
 ** Theory
+#+AUTHOR: Felix
 *** Introduction
 The scatter pattern is another parallel access pattern and the inverse of the gather pattern.
 One is given a set of input data and a set of indices defining where the input data is to written.
@@ -12,12 +12,12 @@ However, unlike gather, scatter is ill-defined when duplicate write addresses ap
 
 #+CAPTION: Undefined scatter
 #+NAME: fig:undef
-[[file:figures/undef.pdf]]
+[[file:figures/undef.png]]
 
 It is unclear how such collisions should be resolved without any rules.
 There are four simple solutions being presented in [[Variants][Variants]].
 
-The simplest serial version of scatter is shown in [[serial]].
+The simplest serial version of scatter is shown [[serial][below]].
 #+NAME: serial
 #+CAPTION: Simple serial version
 #+BEGIN_SRC cpp
@@ -33,31 +33,65 @@ void scatter(vector<Data> &input, vector<Idx> &idx, vector<Data> &output)
 }
 #+END_SRC
 
-#+RESULTS: serial
-
-
 *** Variants
 **** Permutation
+The simplest scatter variant is declaring all collisions illegal, e.g. ~vector<Idx> idx~ [[serial][above]] does not contain duplicates.
+This is called permutation scatter, see Fig. [[fig:permutation]].
+Permutation scatter should generally check if the inputs provided contain collisions (we did not, we trust ourselves).
+Since the operations are all independent, parallelizing is easy.
+
+Side-note: This is the algorithm we implemented.
+
 #+CAPTION: Permutation scatter
 #+NAME: fig:permutation
-[[file:figures/permutation.pdf]]
+[[file:figures/permutation.png]]
+
 **** Atomic
+Another access pattern is the atomic scatter pattern.
+It is defined by writing atomically to the output data, e.g. ~vector<atomic<Data>> &output~ [[serial][above]].
+But the atomic scatter results in undefined behavior, see Fig. [[fig:atomic]]!
+When colliding only one value will end up being observed, all other previous writes will essentially discarded.
+It is only deterministic iff all input data written to the same location have the same value.
+Since the programmer has already accepted having undefined behavior, parallelizing is easy.
+
 #+CAPTION: Atomic scatter
 #+NAME: fig:atomic
-[[file:figures/atomic.pdf]]
+[[file:figures/atomic.png]]
+
 **** Merge
+If the underlying operators to resolve collisions are associative and commutative, the scatter is again well defined.
+Armed with these properties the order of execution does not matter.
+This is called merge scatter, see Fig. [[fig:merge]].
+One danger is, that the algorithm depends on programmers to check these algebraic properties.
+Parallelizing relies on synchronization of writes to same write address.
+
 #+CAPTION: Merge scatter
 #+NAME: fig:merge
-[[file:figures/merge.pdf]]
+[[file:figures/merge.png]]
+
 **** Priority
+The last solution is to assign each collision a property called priority.
+Upon collision the algorithm checks what value has a higher priority and only writes new values if the priority is higher.
+This is called priority scatter, see Fig. [[fig:priority]].
+Parallelizing relies on synchronization of writes to same write address.
+
 #+CAPTION: Priority scatter
 #+NAME: fig:priority
-[[file:figures/priority.pdf]]
+[[file:figures/priority.png]]
+
 *** Expectations
 The first impression data should come into mind looking at [[serial]], is that there are no dependencies in the loop.
-Meaning that this operation is highly parallizeable.
+Meaning that this operation is highly parallizeable in case of permutation scatter.
+
+The second thing that comes to mind is false sharing across on cache lines in NUMA architectures.
+Writes to neighboring addresses invalidates cache entries on different CPUs.
+However, in our case this is highly unlikely since we have $2^{30}$ input elements.
+Thus , it is highly unlikely that addresses of our writes on different CPUs are neighboring.
+
 ** Algorithms
+#+AUTHOR: Anton
 ** Data
+#+AUTHOR: Nadine
 ** Notes
 
-#  LocalWords:  parallizeable
+#  LocalWords:  parallizeable iff NUMA CPUs
