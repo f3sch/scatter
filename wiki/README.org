@@ -12,13 +12,14 @@ However, unlike gather, scatter is ill-defined when duplicate write addresses ap
 
 #+CAPTION: Undefined scatter
 #+NAME: fig:undef
-[[file:figures/undef.png]]
+[[file:figures/undef.pdf]]
 
 It is unclear how such collisions should be resolved without any rules.
-There are four simple solutions being presented in [[Variants]].
+There are four simple solutions being presented in [[Variants][Variants]].
 
 The simplest serial version of scatter is shown in [[serial]].
 #+NAME: serial
+#+CAPTION: Simple serial version
 #+BEGIN_SRC cpp
 template <typename Data = double, typename Idx = size_t>
 void scatter(vector<Data> &input, vector<Idx> &idx, vector<Data> &output)
@@ -39,19 +40,19 @@ void scatter(vector<Data> &input, vector<Idx> &idx, vector<Data> &output)
 **** Permutation
 #+CAPTION: Permutation scatter
 #+NAME: fig:permutation
-[[file:figures/permutation.png]]
+[[file:figures/permutation.pdf]]
 **** Atomic
 #+CAPTION: Atomic scatter
 #+NAME: fig:atomic
-[[file:figures/atomic.png]]
+[[file:figures/atomic.pdf]]
 **** Merge
 #+CAPTION: Merge scatter
 #+NAME: fig:merge
-[[file:figures/merge.png]]
+[[file:figures/merge.pdf]]
 **** Priority
 #+CAPTION: Priority scatter
 #+NAME: fig:priority
-[[file:figures/priority.png]]
+[[file:figures/priority.pdf]]
 *** Expectations
 The first impression data should come into mind looking at [[serial]], is that there are no dependencies in the loop.
 Meaning that this operation is highly parallizeable.
