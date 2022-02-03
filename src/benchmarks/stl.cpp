@@ -20,7 +20,7 @@ BENCHMARK(benchSTLSimple)->Apply(pad::benchmarks::benchArgs)->UseRealTime();
 
 static void benchSTLSimpleLocal(benchmark::State &state)
 {
-  auto [vec, index] = pad::benchmarks::makeDataLocal(state.range(0));
+  auto [vec, index] = pad::benchmarks::makeChunkedPermutation(state.range(0));
   pad::benchmarks::DataVec out(state.range(0));
   for (auto _ : state) {
     pad::stl::scatter(out.begin(), vec, index);

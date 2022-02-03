@@ -20,7 +20,7 @@ BENCHMARK(benchTbbScan)->Apply(pad::benchmarks::benchArgs)->UseRealTime();
 
 static void benchTbbScanLocal(benchmark::State &state)
 {
-  auto [vec, index] = pad::benchmarks::makeDataLocal(state.range(0));
+  auto [vec, index] = pad::benchmarks::makeChunkedPermutation(state.range(0));
   pad::benchmarks::DataVec out(state.range(0));
   for (auto _ : state) {
     pad::tbb::scan::scatter(out.begin(), vec, index);
