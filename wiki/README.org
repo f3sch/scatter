@@ -7,11 +7,13 @@
 *** Introduction
 The scatter pattern is another parallel access pattern and the inverse of the gather pattern.
 One is given a set of input data and a set of indices defining where the input data is to written.
-The scatter operation is completely defined by src_cpp{output[idx[i]] = input[i]}.
+The scatter operation is completely defined by ~output[idx[i]] = input[i]~.
 However, unlike gather, scatter is ill-defined when duplicate write addresses appear, see Fig. [[fig:undef]].
+
 #+CAPTION: Undefined scatter
 #+NAME: fig:undef
 [[file:figures/undef.png]]
+
 It is unclear how such collisions should be resolved without any rules.
 There are four simple solutions being presented in [[Variants]].
 
