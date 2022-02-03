@@ -1,0 +1,60 @@
+#+TITLE: Readme
+#+AUTHOR: Felix Schlepper
+#+OPTIONS: toc:2
+
+* Scatter
+** Theory
+*** Introduction
+The scatter pattern is another parallel access pattern and the inverse of the gather pattern.
+One is given a set of input data and a set of indices defining where the input data is to written.
+The scatter operation is completely defined by src_cpp{output[idx[i]] = input[i]}.
+However, unlike gather, scatter is ill-defined when duplicate write addresses appear, see Fig. [[fig:undef]].
+#+CAPTION: Undefined scatter
+#+NAME: fig:undef
+[[file:figures/undef.png]]
+It is unclear how such collisions should be resolved without any rules.
+There are four simple solutions being presented in [[Variants]].
+
+The simplest serial version of scatter is shown in [[serial]].
+#+NAME: serial
+#+BEGIN_SRC cpp
+template <typename Data = double, typename Idx = size_t>
+void scatter(vector<Data> &input, vector<Idx> &idx, vector<Data> &output)
+{
+  auto N = idx.size(); // get index size
+  for (auto i = 0; i < N; ++i) {
+    auto j = idx[i]; // get ith index;
+    assert(0 <= j && j < N); //check bounds
+    output[j] = input[i]; // perform random write
+  }
+}
+#+END_SRC
+
+#+RESULTS: serial
+
+
+*** Variants
+**** Permutation
+#+CAPTION: Permutation scatter
+#+NAME: fig:permutation
+[[file:figures/permutation.png]]
+**** Atomic
+#+CAPTION: Atomic scatter
+#+NAME: fig:atomic
+[[file:figures/atomic.png]]
+**** Merge
+#+CAPTION: Merge scatter
+#+NAME: fig:merge
+[[file:figures/merge.png]]
+**** Priority
+#+CAPTION: Priority scatter
+#+NAME: fig:priority
+[[file:figures/priority.png]]
+*** Expectations
+The first impression data should come into mind looking at [[serial]], is that there are no dependencies in the loop.
+Meaning that this operation is highly parallizeable.
+** Algorithms
+** Data
+** Notes
+
+#  LocalWords:  parallizeable
