@@ -13,7 +13,7 @@
 namespace pad::benchmarks
 {
 // Define data types
-using DataType = double;
+using DataType = float;
 using Index = size_t;
 template <typename T>
 using Vec = std::vector<T, tbb::cache_aligned_allocator<T> >;
