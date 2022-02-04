@@ -85,7 +85,9 @@ bool cmpFloat(DataType a, DataType b,
               DataType eps = std::numeric_limits<DataType>::epsilon());
 void verifyScatter(DataVec inVec, IndexVec index, DataVec out);
 void benchArgs(benchmark::internal::Benchmark *b);
+void benchGrainArgs(benchmark::internal::Benchmark *b);
 void benchCounters(benchmark::State &state);
+void benchGrainCounters(benchmark::State &state);
 } // namespace pad::benchmarks
 
 #endif
