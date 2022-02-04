@@ -4,7 +4,7 @@
 #include <benchmark/benchmark.h>
 #include <vector>
 
-#define SIZE 1 << 20
+#define SIZE 1 << 30
 
 static void benchTBBSimpleGrainAuto(benchmark::State &state)
 {
