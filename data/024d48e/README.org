@@ -1,4 +1,5 @@
 #+TITLE: Readme
+#+AUTHOR: Felix Schlepper
 
 * General
 Benchmarked on _rome_.
@@ -17,6 +18,19 @@ Built with g++.
 There is no real improvement visible using cache_aligned allocators.
 They probably already aligned anyways.
 
+
+[[file:tbbSimplePart.png]]
+
+I compared using a dedicated partitioner with TBB like this:
+#+BEGIN_SRC cpp
+static tbb::affinity_partitioner aff_p;
+tbb::parallel_for(..., aff_p);
+#+END_SRC
+However, there is no visible improvement doing this.
+Most surprisingly, using no partitioner, which defaults to auto_partitioner, is worse than using auto_partitioner explicitly.
+My guess is, that the data was shuffled in favor of the older data from Commit 2ed9825.
+But this is not confirmed...
+
 * Notes
 - the data is now cache aligned
 - there are benchmarks for local data
@@ -24,3 +38,5 @@ They probably already aligned anyways.
 - serialUnrolledLoop throws with wrong results
 - for both the core crashes are included
 - I canceled the *ScanBench as they are ridiculously slow
+
+#  LocalWords:  partitioner

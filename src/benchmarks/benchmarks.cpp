@@ -68,6 +68,15 @@ void benchLocalityArgs(benchmark::internal::Benchmark *b)
 }
 
 
+void benchGrainArgs(benchmark::internal::Benchmark *b)
+{
+  const auto lowerLimit = 1;
+  const auto uppperLimit = 30;
+  for (auto i = lowerLimit; i <= uppperLimit; ++i) {
+    b->Args({ 1 << i });
+  }
+}
+
 void benchCounters(benchmark::State &state)
 {
   state.counters["Elements"] = state.range(0);
@@ -80,6 +89,11 @@ void benchCounters(benchmark::State &state)
   state.counters["GOPperIter"] = GOP / state.iterations();
   state.counters["Bytes_processed"] =
       state.range(0) * (2 * sizeof(DataType) + sizeof(Index));
+}
+
+void benchGrainCounters(benchmark::State &state)
+{
+  state.counters["Grainsize"] = state.range(0);
 }
 
 } // namespace pad::benchmarks

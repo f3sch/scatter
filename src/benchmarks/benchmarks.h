@@ -73,7 +73,7 @@ private:
 namespace pad::benchmarks
 {
 // Define data types
-using DataType = double;
+using DataType = float;
 using Index = size_t;
 template <typename T>
 using Vec = std::vector<T, default_init_allocator<T, tbb::cache_aligned_allocator<T>> >;
@@ -92,7 +92,7 @@ template <typename DataType> inline auto distribution()
   }
 }
 
-template <typename DataType = double, typename Index = size_t>
+template <typename DataType = float, typename Index = size_t>
 std::pair<Vec<DataType>, Vec<Index> > makeData(size_t n)
 {
   Vec<DataType> vec(n);
@@ -109,7 +109,7 @@ std::pair<Vec<DataType>, Vec<Index> > makeData(size_t n)
   return make_pair(vec, index);
 }
 
-template <typename DataType = double, typename Index = size_t>
+template <typename DataType = float, typename Index = size_t>
 auto makeComputedInput(size_t n)
 {
   auto vec = ranges::views::iota(0ul, n);
@@ -118,7 +118,7 @@ auto makeComputedInput(size_t n)
   return std::make_pair(vec, index);
 }
 
-template <typename DataType = double, typename Index = size_t>
+template <typename DataType = float, typename Index = size_t>
 std::pair<Vec<DataType>, Vec<Index> >
 makeChunkedPermutation(size_t n, size_t chunk_size = 1024, double prob = 1.0)
 {
@@ -151,7 +151,7 @@ makeChunkedPermutation(size_t n, size_t chunk_size = 1024, double prob = 1.0)
 }
 
 
-template <typename DataType = double, typename Index = size_t>
+template <typename DataType = float, typename Index = size_t>
 std::pair<Vec<DataType>, Vec<Index> > makeNormalDistributedShuffle(size_t n, size_t distance,
                                                     double prob = 1.0)
 {
@@ -182,7 +182,9 @@ bool cmpFloat(DataType a, DataType b,
 void verifyScatter(DataVec inVec, IndexVec index, DataVec out);
 void benchArgs(benchmark::internal::Benchmark *b);
 void benchLocalityArgs(benchmark::internal::Benchmark *b);
+void benchGrainArgs(benchmark::internal::Benchmark *b);
 void benchCounters(benchmark::State &state);
+void benchGrainCounters(benchmark::State &state);
 } // namespace pad::benchmarks
 
 #endif
