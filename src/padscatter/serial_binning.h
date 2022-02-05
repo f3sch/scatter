@@ -39,7 +39,7 @@ namespace fully_associative
 
 template <size_t chunkSize = 1024, size_t binSize = 64, typename OutIt_t,
     typename ZipRng_t>
-void scatter(OutIt_t outIt, const ZipRng_t &zipRng)
+void scatter(OutIt_t outIt, ZipRng_t &&zipRng)
 {
   using namespace ranges;
   using namespace ranges::views;
@@ -90,7 +90,7 @@ void scatter(OutIt_t outIt, const ZipRng_t &zipRng)
 
   for (const auto &chunk : chunks) {
     for (const auto &[val, idx] : chunk) {
-      assert(0 <= idx && static_cast<size_t>(idx) < ranges::size(idxRng));
+      assert(0 <= idx && static_cast<size_t>(idx) < ranges::size(zipRng));
       auto tag = idx >> logBinSize;
       if (tag == bin0Tag) {
         bin0[bin0FillLevel] = { idx, val };
@@ -297,7 +297,7 @@ void scatter(OutIt_t outIt, const ZipRng_t &zipRng)
 
 template <size_t chunkSize = 1024, size_t binSize = 64, typename OutIt_t,
     typename InRng_t, typename IdxRng_t>
-void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
+void scatter(OutIt_t outIt, InRng_t &inRng, IdxRng_t &idxRng)
 {
   scatter<chunkSize, binSize>(outIt, ranges::views::zip(inRng, idxRng));
 }
@@ -310,7 +310,7 @@ namespace direct_mapping
 template <size_t chunkSize = 1024, size_t binSize = 64,
     size_t cacheLineSize = 64, size_t bankCount = 8, typename OutIt_t,
     typename ZipRng_t>
-void scatter(OutIt_t outIt, const ZipRng_t &zipRng)
+void scatter(OutIt_t outIt, ZipRng_t &&zipRng)
 {
   using namespace ranges;
   using namespace ranges::views;
@@ -336,7 +336,7 @@ void scatter(OutIt_t outIt, const ZipRng_t &zipRng)
     auto cacheTags = std::array<size_t, bankCount>{};
 
     for (auto &&[val, idx] : chunk) {
-      assert(0 <= idx && static_cast<size_t>(idx) < ranges::size(idxRng));
+      assert(0 <= idx && static_cast<size_t>(idx) < ranges::size(zipRng));
       auto tag = idx >> logBinSize;
       auto bank = tag & bankMask;
 
@@ -378,7 +378,7 @@ void scatter(OutIt_t outIt, const ZipRng_t &zipRng)
 template <size_t chunkSize = 1024, size_t binSize = 64,
     size_t cacheLineSize = 64, size_t bankCount = 8, typename OutIt_t,
     typename InRng_t, typename IdxRng_t>
-void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
+void scatter(OutIt_t outIt, InRng_t &inRng, IdxRng_t &idxRng)
 {
   scatter<chunkSize, binSize, cacheLineSize, bankCount>(outIt, ranges::views::zip(inRng, idxRng));
 }

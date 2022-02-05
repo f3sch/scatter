@@ -2,6 +2,10 @@
 #include "scatter.h"
 #include <benchmark/benchmark.h>
 #include <vector>
+#include <iostream>
+#include <range/v3/algorithm/copy.hpp>
+#include <range/v3/view/take.hpp>
+#include <range/v3/iterator.hpp>
 
 static void benchCopy(benchmark::State &state)
 {
@@ -45,6 +49,22 @@ static void benchSerialSimpleId(benchmark::State &state)
 }
 BENCHMARK(benchSerialSimpleId)->Apply(pad::benchmarks::benchArgs)->UseRealTime();
 
+static void benchSerialSimpleComputedId(benchmark::State &state)
+{
+  size_t N = state.range(0);
+  auto out = pad::benchmarks::DataVec ( N );
+  auto vec = ranges::views::iota(0ul, N);
+  auto index = ranges::views::iota(0ul, N);
+
+  for (auto _ : state) {
+    pad::serial::scatter(out.begin(), vec, index);
+    benchmark::ClobberMemory();
+  }
+//  pad::benchmarks::verifyScatter(vec, index, out);
+  pad::benchmarks::benchCounters(state);
+}
+BENCHMARK(benchSerialSimpleComputedId)->Apply(pad::benchmarks::benchArgs)->UseRealTime();
+
 static void benchSerialSimpleRandom(benchmark::State &state)
 {
   auto [vec, index] = pad::benchmarks::makeData(state.range(0));
@@ -59,6 +79,21 @@ static void benchSerialSimpleRandom(benchmark::State &state)
   pad::benchmarks::benchCounters(state);
 }
 BENCHMARK(benchSerialSimpleRandom)->Apply(pad::benchmarks::benchArgs)->UseRealTime();
+
+static void benchSerialSimpleComputedRandom(benchmark::State &state)
+{
+  pad::benchmarks::Vec<size_t> out(state.range(0));
+  for (auto _ : state) {
+    auto [vec, index] = pad::benchmarks::makeComputedInput(state.range(0));
+    pad::serial::scatter(out.begin(), vec, index);
+    benchmark::DoNotOptimize(out.data());
+    benchmark::ClobberMemory();
+  }
+//  ranges::copy(out | ranges::views::take(64), ranges::ostream_iterator<double>(std::cout, ", "));
+  // verifyScatter(vec, index, out);
+  pad::benchmarks::benchCounters(state);
+}
+BENCHMARK(benchSerialSimpleComputedRandom)->Apply(pad::benchmarks::benchArgs)->UseRealTime();
 
 static void benchSerialSimpleChunkedPermutation(benchmark::State &state)
 {

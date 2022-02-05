@@ -43,6 +43,21 @@ BENCHMARK(benchSerialBinningFullyAssociativeRandom)
     ->Apply(pad::benchmarks::benchArgs)
     ->UseRealTime();
 
+
+static void benchSerialBinningFACompRand(benchmark::State &state)
+{
+  pad::benchmarks::DataVec out(state.range(0));
+  for (auto _ : state) {
+    auto [vec, index] = pad::benchmarks::makeComputedInput(state.range(0));
+    pad::serial_binning::fully_associative::scatter(out.begin(), vec, index);
+    benchmark::DoNotOptimize(out.data());
+    benchmark::ClobberMemory();
+  }
+  pad::benchmarks::benchCounters(state);
+}
+BENCHMARK(benchSerialBinningFACompRand)->Apply(pad::benchmarks::benchArgs)->UseRealTime();
+
+
 static void benchSerialBinningFullyAssociativeChunkedPermutation(benchmark::State &state)
 {
   auto [vec, index] = pad::benchmarks::makeChunkedPermutation(state.range(0), state.range(1));
@@ -128,6 +143,21 @@ static void benchSerialBinningDirectMappingRandom(benchmark::State &state)
 BENCHMARK(benchSerialBinningDirectMappingRandom)
     ->Apply(pad::benchmarks::benchArgs)
     ->UseRealTime();
+
+
+static void benchSerialBinningDMCompRand(benchmark::State &state)
+{
+  pad::benchmarks::DataVec out(state.range(0));
+  for (auto _ : state) {
+    auto [vec, index] = pad::benchmarks::makeComputedInput(state.range(0));
+    pad::serial_binning::direct_mapping::scatter(out.begin(), vec, index);
+    benchmark::DoNotOptimize(out.data());
+    benchmark::ClobberMemory();
+  }
+  pad::benchmarks::benchCounters(state);
+}
+BENCHMARK(benchSerialBinningDMCompRand)->Apply(pad::benchmarks::benchArgs)->UseRealTime();
+
 
 static void benchSerialBinningDirectMappingChunkedPermutation(benchmark::State &state)
 {

@@ -10,6 +10,9 @@
 
 #include <tbb/cache_aligned_allocator.h>
 
+#include <range/v3/view/iota.hpp>
+#include <range/v3/view/generate_n.hpp>
+
 
 template <typename T, typename A = std::allocator<T>>
 class default_init_allocator : public A
@@ -37,6 +40,34 @@ class default_init_allocator : public A
 			{
 				std::allocator_traits<A>::construct(static_cast<A&>(*this), ptr, std::forward<ArgsT>(args)...);
 			}
+};
+
+struct linear_congruential_permutation_engine
+{
+  explicit linear_congruential_permutation_engine(size_t m, size_t seed)
+      : m_x(seed)
+      , m_mask(m - 1)
+  {
+    assert((m & (m - 1)) == 0); // assert m is a power of 2
+  }
+
+  size_t
+  operator()()
+  {
+    m_x = (a * m_x + c) & m_mask; // & m_mask is the same as % m (if m is a power of 2)
+    return m_x;
+  }
+  size_t min()
+  { return 0u; }
+
+  size_t max()
+  { return m_mask; }
+
+private:
+    static constexpr size_t a = 16805;
+    static constexpr size_t c = 9187;
+    size_t m_x;
+    size_t m_mask;
 };
 
 namespace pad::benchmarks
@@ -76,6 +107,15 @@ std::pair<Vec<DataType>, Vec<Index> > makeData(size_t n)
   shuffle(begin(index), end(index), mersenne_engine);
 
   return make_pair(vec, index);
+}
+
+template <typename DataType = double, typename Index = size_t>
+auto makeComputedInput(size_t n)
+{
+  auto vec = ranges::views::iota(0ul, n);
+  auto index = ranges::views::generate_n(linear_congruential_permutation_engine { n, 461887 }, n);
+
+  return std::make_pair(vec, index);
 }
 
 template <typename DataType = double, typename Index = size_t>
