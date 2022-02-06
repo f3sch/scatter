@@ -60,8 +60,17 @@ void benchArgs(benchmark::internal::Benchmark *b)
 
 void benchGrainArgs(benchmark::internal::Benchmark *b)
 {
-  const auto lowerLimit = 1;
-  const auto uppperLimit = 30;
+  const auto lowerLimit = 0;
+  const auto uppperLimit = 27;
+  for (auto i = lowerLimit; i <= uppperLimit; ++i) {
+    b->Args({ 1 << i });
+  }
+}
+
+void benchPartitionArgs(benchmark::internal::Benchmark *b)
+{
+  const auto lowerLimit = 10;
+  const auto uppperLimit = 27;
   for (auto i = lowerLimit; i <= uppperLimit; ++i) {
     b->Args({ 1 << i });
   }

@@ -27,9 +27,9 @@ template <typename T> inline bool check_range(T value, T min, T max)
  * Implementing the multipass scatter, suggested [[here][https://cse.hkust.edu.hk/catalac/papers/scatter_sc07.pdf]].
  * This should improve write locality _dramatically_ (probably screwed it up tho).
  */
-template <size_t sizePartition = 1024, typename OutIt_t, typename InRng_t,
-          typename IdxRng_t>
-void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
+template <typename OutIt_t, typename InRng_t, typename IdxRng_t>
+void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng,
+             size_t sizePartition = 1024)
 {
   // check boundaries
   auto N = ranges::size(inRng);

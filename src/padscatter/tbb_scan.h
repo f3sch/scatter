@@ -30,11 +30,10 @@ template <typename T> inline bool check_range(T value, T min, T max)
  * This should improve write locality _dramatically_ (probably screwed it up tho).
  * This is the tbb version, meaning that instead of doing multiple passes, we are doing it in parallel.
  * Since the passes are independent of each other, this should prove to be an improvement.
- * False sharing on the numa nodes are avoided by the partitioning automatically.
  */
-template <size_t sizePartition = 1024, typename OutIt_t, typename InRng_t,
-          typename IdxRng_t>
-void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
+template <typename OutIt_t, typename InRng_t, typename IdxRng_t>
+void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng,
+             size_t sizePartition = 1024)
 {
   // check boundaries
   auto N = ranges::size(inRng);

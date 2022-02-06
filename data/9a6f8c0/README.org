@@ -1,0 +1,8 @@
+#+TITLE: Readme
+#+AUTHOR: Felix Schlepper
+
+Testing different partitioners and grainsizes in tbbSimpleBench.
+
+[[file:tbbSimpleGrain.png]]
+
+Seems to me that, the static partitioner with $2^{10}$ and auto with $2^0$ perform the best.

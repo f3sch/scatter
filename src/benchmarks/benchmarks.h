@@ -86,6 +86,7 @@ bool cmpFloat(DataType a, DataType b,
 void verifyScatter(DataVec inVec, IndexVec index, DataVec out);
 void benchArgs(benchmark::internal::Benchmark *b);
 void benchGrainArgs(benchmark::internal::Benchmark *b);
+void benchPartitionArgs(benchmark::internal::Benchmark *b);
 void benchCounters(benchmark::State &state);
 void benchGrainCounters(benchmark::State &state);
 } // namespace pad::benchmarks
