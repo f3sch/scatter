@@ -12,7 +12,7 @@ namespace pad::serial
  * Simple and stupid serial scatter
  */
 template <typename OutIt_t, typename InRng_t, typename IdxRng_t>
-void scatter(OutIt_t outIt, const InRng_t &inRng, const IdxRng_t &idxRng)
+void scatter(OutIt_t outIt, InRng_t &inRng, IdxRng_t &idxRng)
 {
   using namespace std;
   auto inIt = begin(inRng);

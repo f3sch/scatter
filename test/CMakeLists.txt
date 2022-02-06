@@ -18,6 +18,7 @@ endfunction()
 # Add test here
 add_my_test(tst_scatter tst_scatter.cpp)
 add_my_test(tst_bench tst_benchmark.cpp)
+add_my_test(tst_lazy_permutation tst_lazy_permutation.cpp)
 
 # Add to cached variable
 set(TESTS_AVAIL ${TESTS_AVAIL_TMP} CACHE INTERNAL ${TESTS_AVAIL_TMP})
