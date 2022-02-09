@@ -1,6 +1,6 @@
 # Interface Library
 add_library(padscatter INTERFACE)
-target_link_libraries(padscatter INTERFACE TBB::tbb Threads::Threads range-v3)
+target_link_libraries(padscatter INTERFACE TBB::tbb Threads::Threads OpenMP::OpenMP_CXX range-v3)
 target_include_directories(
   padscatter
   INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/padscatter
