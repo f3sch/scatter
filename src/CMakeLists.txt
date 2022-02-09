@@ -33,8 +33,8 @@ add_my_benchmark(tbbSimpleBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/tbb_simpl
 add_my_benchmark(tbbPresortBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/tbb_presort.cpp)
 add_my_benchmark(tbbScanBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/tbb_scan.cpp)
 add_my_benchmark(tbbBinningBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/tbb_binning.cpp)
-add_my_benchmark(ompParallelBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/omp.cpp)
-add_my_benchmark(ompSerialBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/serial_omp_simd.cpp)
+add_my_benchmark(ompParallelBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/omp_parallel.cpp)
+add_my_benchmark(ompSerialBench ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/omp_serial.cpp)
 
 ## Add costum add_benchmark
 function(add_my_opt targetName)

@@ -1,20 +1,19 @@
-#ifndef OMP_H_
-#define OMP_H_
+#ifndef OMP_SERIAL_H_
+#define OMP_SERIAL_H_
 
 #include <cassert>
 #include <omp.h>
 
-namespace pad::omp::parallel
+namespace pad::omp::serial
 {
 
 /*
  * Scatter using the builtin assembler mappings.
  * Only works with floats and a shuffle chunksize of 16!
- * https://godbolt.org/z/s8vaKPsYj-> vectorization on skylake and epyc
+ * https://godbolt.org/z/Yb9fG3b6c -> vectorization on skylake and epyc
  */
 template <typename Vec_t, typename Idx_t>
-void scatter(Vec_t &out, const Vec_t &in, const Idx_t &idx,
-             unsigned short nThreads = 0) noexcept
+void scatter(Vec_t &out, const Vec_t &in, const Idx_t &idx) noexcept
 {
   int j;
   auto a = out.data();
@@ -23,10 +22,6 @@ void scatter(Vec_t &out, const Vec_t &in, const Idx_t &idx,
   auto N = static_cast<int>(idx.size()); // max is 2^30
   assert(N % 16 == 0);
 
-  if (nThreads != 0) {
-    omp_set_num_threads(nThreads);
-  }
-#pragma omp parallel for private(j) schedule(static)
   for (auto i = 0; i < N; i += 16) {
 #pragma omp simd aligned(a, b, c) safelen(16)
     for (j = 0; j < 16; ++j) {
@@ -34,6 +29,6 @@ void scatter(Vec_t &out, const Vec_t &in, const Idx_t &idx,
     }
   }
 }
-} // namespace pad::omp::parallel
+} // namespace pad::omp::serial
 
-#endif // OMP_H_
+#endif // OMP_SERIAL_H_
