@@ -1,4 +1,4 @@
-#include "serial_intr_simd.h"
+#include "serial_omp_simd.h"
 #include "benchmarks.h"
 #include <benchmark/benchmark.h>
 #include <vector>

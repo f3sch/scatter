@@ -1,15 +1,16 @@
-#ifndef SERIAL_INTR_SIMD_H_
-#define SERIAL_INTR_SIMD_H_
+#ifndef SERIAL_OMP_SIMD_H_
+#define SERIAL_OMP_SIMD_H_
 
 #include <cassert>
 #include <omp.h>
 
-namespace pad::serial_intr_simd
+namespace pad::serial_omp_simd
 {
 
 /*
  * Scatter using the builtin assembler mappings.
  * Only works with floats and a shuffle chunksize of 16!
+ * https://godbolt.org/z/Yb9fG3b6c -> vectorization on skylake and epyc
  */
 template <typename Vec_t, typename Idx_t>
 void scatter(Vec_t &out, const Vec_t &in, const Idx_t &idx)
@@ -28,6 +29,6 @@ void scatter(Vec_t &out, const Vec_t &in, const Idx_t &idx)
     }
   }
 }
-} // namespace pad::serial_intr_simd
+} // namespace pad::serial_omp_simd
 
-#endif // SERIAL_INTR_SIMD_H_
+#endif // SERIAL_OMP_SIMD_H_
