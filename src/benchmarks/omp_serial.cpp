@@ -3,7 +3,7 @@
 #include <benchmark/benchmark.h>
 #include <vector>
 
-static void benchSerialIntrSimd(benchmark::State &state)
+static void benchOmpSerial(benchmark::State &state)
 {
   using namespace pad::benchmarks;
   auto N = state.range(0);
@@ -17,6 +17,6 @@ static void benchSerialIntrSimd(benchmark::State &state)
   verifyScatter(vec, index, out);
   benchCounters(state);
 }
-BENCHMARK(benchSerialIntrSimd)->Apply(pad::benchmarks::benchArgs)->UseRealTime();
+BENCHMARK(benchOmpSerial)->Apply(pad::benchmarks::benchArgs)->UseRealTime();
 
 BENCHMARK_MAIN();
