@@ -10,7 +10,7 @@ namespace pad::omp::parallel
 /*
  * Scatter using the builtin assembler mappings.
  * Only works with floats and a shuffle chunksize of 16!
- *  -> vectorization on skylake and epyc
+ * https://godbolt.org/z/s8vaKPsYj-> vectorization on skylake and epyc
  */
 template <typename Vec_t, typename Idx_t>
 void scatter(Vec_t &out, const Vec_t &in, const Idx_t &idx,
