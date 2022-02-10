@@ -91,9 +91,13 @@ void benchOmpArgs(benchmark::internal::Benchmark *b)
   const auto uppperLimitChunk = 5;
   const auto lowerLimitSize = 5;
   const auto uppperLimitSize = 10;
-  for (auto i = lowerLimitSize; i <= uppperLimitSize; ++i) {
-    for (auto j = lowerLimitChunk; i <= uppperLimitChunk; ++i) {
-      b->Args({ 1 << i, 1 << j });
+  const auto lowerLimitSize = 0;
+  const auto uppperLimitSize = 8;
+  for (auto k = lowerLimitThreads; k <= uppperLimitThreads; ++i) {
+    for (auto i = lowerLimitSize; i <= uppperLimitSize; ++i) {
+      for (auto j = lowerLimitChunk; i <= uppperLimitChunk; ++i) {
+        b->Args({ 1 << i, 1 << j, k });
+      }
     }
   }
 }
@@ -121,6 +125,7 @@ void benchOmpCounters(benchmark::State &state)
 {
   state.counters["Elements"] = state.range(0);
   state.counters["ChunkSize"] = state.range(1);
+  state.counters["Threads"] = state.range(2);
 }
 
 } // namespace pad::benchmarks

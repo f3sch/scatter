@@ -10,8 +10,8 @@ static void benchOmpParallelStatic(benchmark::State &state)
   auto [vec, index] = makeChunkedPermutation(state.range(0), 16);
   DataVec out(N);
   for (auto _ : state) {
-    pad::omp::parallel::scatter(out, vec, index, omp_sched_static,
-                                state.range(1));
+    pad::omp::parallel::scatter(out, vec, index, state.range(2),
+                                omp_sched_static, state.range(1));
     benchmark::DoNotOptimize(out.data());
     benchmark::ClobberMemory();
   }
@@ -29,7 +29,7 @@ static void benchOmpParallelAuto(benchmark::State &state)
   auto [vec, index] = makeChunkedPermutation(state.range(0), 16);
   DataVec out(N);
   for (auto _ : state) {
-    pad::omp::parallel::scatter(out, vec, index, omp_sched_auto,
+    pad::omp::parallel::scatter(out, vec, index, state.range(2), omp_sched_auto,
                                 state.range(1));
     benchmark::DoNotOptimize(out.data());
     benchmark::ClobberMemory();
@@ -48,8 +48,8 @@ static void benchOmpParallelDynamic(benchmark::State &state)
   auto [vec, index] = makeChunkedPermutation(state.range(0), 16);
   DataVec out(N);
   for (auto _ : state) {
-    pad::omp::parallel::scatter(out, vec, index, omp_sched_dynamic,
-                                state.range(1));
+    pad::omp::parallel::scatter(out, vec, index, state.range(2),
+                                omp_sched_dynamic, state.range(1));
     benchmark::DoNotOptimize(out.data());
     benchmark::ClobberMemory();
   }
@@ -67,8 +67,8 @@ static void benchOmpParallelGuided(benchmark::State &state)
   auto [vec, index] = makeChunkedPermutation(state.range(0), 16);
   DataVec out(N);
   for (auto _ : state) {
-    pad::omp::parallel::scatter(out, vec, index, omp_sched_guided,
-                                state.range(1));
+    pad::omp::parallel::scatter(out, vec, index, state.range(2),
+                                omp_sched_guided, state.range(1));
     benchmark::DoNotOptimize(out.data());
     benchmark::ClobberMemory();
   }
@@ -86,8 +86,8 @@ static void benchOmpParallelMonotonic(benchmark::State &state)
   auto [vec, index] = makeChunkedPermutation(state.range(0), 16);
   DataVec out(N);
   for (auto _ : state) {
-    pad::omp::parallel::scatter(out, vec, index, omp_sched_monotonic,
-                                state.range(1));
+    pad::omp::parallel::scatter(out, vec, index, state.range(2),
+                                omp_sched_monotonic, state.range(1));
     benchmark::DoNotOptimize(out.data());
     benchmark::ClobberMemory();
   }
