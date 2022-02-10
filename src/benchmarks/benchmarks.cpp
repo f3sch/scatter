@@ -67,7 +67,6 @@ void benchLocalityArgs(benchmark::internal::Benchmark *b)
   }
 }
 
-
 void benchGrainArgs(benchmark::internal::Benchmark *b)
 {
   const auto lowerLimit = 0;
@@ -83,6 +82,19 @@ void benchPartitionArgs(benchmark::internal::Benchmark *b)
   const auto uppperLimit = 27;
   for (auto i = lowerLimit; i <= uppperLimit; ++i) {
     b->Args({ 1 << i });
+  }
+}
+
+void benchOmpArgs(benchmark::internal::Benchmark *b)
+{
+  const auto lowerLimitChunk = 1;
+  const auto uppperLimitChunk = 5;
+  const auto lowerLimitSize = 5;
+  const auto uppperLimitSize = 10;
+  for (auto i = lowerLimitSize; i <= uppperLimitSize; ++i) {
+    for (auto j = lowerLimitChunk; i <= uppperLimitChunk; ++i) {
+      b->Args({ 1 << i, 1 << j });
+    }
   }
 }
 
@@ -103,6 +115,12 @@ void benchCounters(benchmark::State &state)
 void benchGrainCounters(benchmark::State &state)
 {
   state.counters["Grainsize"] = state.range(0);
+}
+
+void benchOmpCounters(benchmark::State &state)
+{
+  state.counters["Elements"] = state.range(0);
+  state.counters["ChunkSize"] = state.range(1);
 }
 
 } // namespace pad::benchmarks

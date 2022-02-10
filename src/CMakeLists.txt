@@ -47,6 +47,7 @@ endfunction()
 add_my_opt(serialScanOpt ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/optimization/serial_scan.cpp)
 add_my_opt(tbbSimpleOpt ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/optimization/tbb_simple.cpp)
 add_my_opt(tbbScanOpt ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/optimization/tbb_scan.cpp)
+add_my_opt(ompParallelOpt ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/optimization/omp_parallel.cpp)
 
 # Add to chached variable
 set(BENCHMARKS_AVAIL ${BENCHMARKS_AVAIL_TMP} CACHE INTERNAL ${BENCHMARKS_AVAIL_TMP})
