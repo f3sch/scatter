@@ -3,99 +3,106 @@
 #include <benchmark/benchmark.h>
 #include <vector>
 
+using namespace pad::benchmarks;
+
 static void benchOmpParallelStatic(benchmark::State &state)
 {
-  using namespace pad::benchmarks;
-  auto N = state.range(0);
-  auto [vec, index] = makeChunkedPermutation(state.range(0), 16);
-  DataVec out(N);
-  for (auto _ : state) {
-    pad::omp::parallel::scatter(out, vec, index, state.range(2),
-                                omp_sched_static, state.range(1));
-    benchmark::DoNotOptimize(out.data());
-    benchmark::ClobberMemory();
-  }
-  verifyScatter(vec, index, out);
-  benchOmpCounters(state);
-}
-BENCHMARK(benchOmpParallelStatic)
-    ->Apply(pad::benchmarks::benchArgs)
-    ->UseRealTime();
+  auto N = state.range(0); // Problem size
+  auto ChunkSize = state.range(1); // Chunksize
+  auto nThreads = state.range(2); // #Threads
 
-static void benchOmpParallelAuto(benchmark::State &state)
-{
-  using namespace pad::benchmarks;
-  auto N = state.range(0);
-  auto [vec, index] = makeChunkedPermutation(state.range(0), 16);
+  auto [vec, index] = makeChunkedPermutation(N, 16);
   DataVec out(N);
   for (auto _ : state) {
-    pad::omp::parallel::scatter(out, vec, index, state.range(2), omp_sched_auto,
-                                state.range(1));
-    benchmark::DoNotOptimize(out.data());
-    benchmark::ClobberMemory();
-  }
-  verifyScatter(vec, index, out);
-  benchOmpCounters(state);
-}
-BENCHMARK(benchOmpParallelAuto)
-    ->Apply(pad::benchmarks::benchArgs)
-    ->UseRealTime();
+    pad::omp::parallel::scatter(out, vec, index, nThreads, omp_sched_static,
+                                ChunkSize);
 
-static void benchOmpParallelDynamic(benchmark::State &state)
-{
-  using namespace pad::benchmarks;
-  auto N = state.range(0);
-  auto [vec, index] = makeChunkedPermutation(state.range(0), 16);
-  DataVec out(N);
-  for (auto _ : state) {
-    pad::omp::parallel::scatter(out, vec, index, state.range(2),
-                                omp_sched_dynamic, state.range(1));
     benchmark::DoNotOptimize(out.data());
     benchmark::ClobberMemory();
   }
   verifyScatter(vec, index, out);
   benchOmpCounters(state);
 }
-BENCHMARK(benchOmpParallelDynamic)
-    ->Apply(pad::benchmarks::benchArgs)
-    ->UseRealTime();
-
-static void benchOmpParallelGuided(benchmark::State &state)
-{
-  using namespace pad::benchmarks;
-  auto N = state.range(0);
-  auto [vec, index] = makeChunkedPermutation(state.range(0), 16);
-  DataVec out(N);
-  for (auto _ : state) {
-    pad::omp::parallel::scatter(out, vec, index, state.range(2),
-                                omp_sched_guided, state.range(1));
-    benchmark::DoNotOptimize(out.data());
-    benchmark::ClobberMemory();
-  }
-  verifyScatter(vec, index, out);
-  benchOmpCounters(state);
-}
-BENCHMARK(benchOmpParallelGuided)
-    ->Apply(pad::benchmarks::benchArgs)
-    ->UseRealTime();
+BENCHMARK(benchOmpParallelStatic)->Apply(benchOmpArgs)->UseRealTime();
 
 static void benchOmpParallelMonotonic(benchmark::State &state)
 {
-  using namespace pad::benchmarks;
-  auto N = state.range(0);
-  auto [vec, index] = makeChunkedPermutation(state.range(0), 16);
+  auto N = state.range(0); // Problem size
+  auto ChunkSize = state.range(1); // Chunksize
+  auto nThreads = state.range(2); // #Threads
+
+  auto [vec, index] = makeChunkedPermutation(N, 16);
   DataVec out(N);
   for (auto _ : state) {
-    pad::omp::parallel::scatter(out, vec, index, state.range(2),
-                                omp_sched_monotonic, state.range(1));
+    pad::omp::parallel::scatter(out, vec, index, nThreads, omp_sched_monotonic,
+                                ChunkSize);
+
     benchmark::DoNotOptimize(out.data());
     benchmark::ClobberMemory();
   }
   verifyScatter(vec, index, out);
   benchOmpCounters(state);
 }
-BENCHMARK(benchOmpParallelMonotonic)
-    ->Apply(pad::benchmarks::benchArgs)
-    ->UseRealTime();
+BENCHMARK(benchOmpParallelMonotonic)->Apply(benchOmpArgs)->UseRealTime();
+
+static void benchOmpParallelAuto(benchmark::State &state)
+{
+  auto N = state.range(0); // Problem size
+  auto ChunkSize = state.range(1); // Chunksize
+  auto nThreads = state.range(2); // #Threads
+
+  auto [vec, index] = makeChunkedPermutation(N, 16);
+  DataVec out(N);
+  for (auto _ : state) {
+    pad::omp::parallel::scatter(out, vec, index, nThreads, omp_sched_auto,
+                                ChunkSize);
+
+    benchmark::DoNotOptimize(out.data());
+    benchmark::ClobberMemory();
+  }
+  verifyScatter(vec, index, out);
+  benchOmpCounters(state);
+}
+BENCHMARK(benchOmpParallelAuto)->Apply(benchOmpArgs)->UseRealTime();
+
+static void benchOmpParallelGuided(benchmark::State &state)
+{
+  auto N = state.range(0); // Problem size
+  auto ChunkSize = state.range(1); // Chunksize
+  auto nThreads = state.range(2); // #Threads
+
+  auto [vec, index] = makeChunkedPermutation(N, 16);
+  DataVec out(N);
+  for (auto _ : state) {
+    pad::omp::parallel::scatter(out, vec, index, nThreads, omp_sched_guided,
+                                ChunkSize);
+
+    benchmark::DoNotOptimize(out.data());
+    benchmark::ClobberMemory();
+  }
+  verifyScatter(vec, index, out);
+  benchOmpCounters(state);
+}
+BENCHMARK(benchOmpParallelGuided)->Apply(benchOmpArgs)->UseRealTime();
+
+static void benchOmpParallelDynamic(benchmark::State &state)
+{
+  auto N = state.range(0); // Problem size
+  auto ChunkSize = state.range(1); // Chunksize
+  auto nThreads = state.range(2); // #Threads
+
+  auto [vec, index] = makeChunkedPermutation(N, 16);
+  DataVec out(N);
+  for (auto _ : state) {
+    pad::omp::parallel::scatter(out, vec, index, nThreads, omp_sched_dynamic,
+                                ChunkSize);
+
+    benchmark::DoNotOptimize(out.data());
+    benchmark::ClobberMemory();
+  }
+  verifyScatter(vec, index, out);
+  benchOmpCounters(state);
+}
+BENCHMARK(benchOmpParallelDynamic)->Apply(benchOmpArgs)->UseRealTime();
 
 BENCHMARK_MAIN();

@@ -87,16 +87,16 @@ void benchPartitionArgs(benchmark::internal::Benchmark *b)
 
 void benchOmpArgs(benchmark::internal::Benchmark *b)
 {
-  const auto lowerLimitChunk = 1;
-  const auto uppperLimitChunk = 5;
-  const auto lowerLimitSize = 5;
-  const auto uppperLimitSize = 10;
+  const auto lowerLimitChunk = 10;
+  const auto uppperLimitChunk = 20;
+  const auto lowerLimitSize = 15;
+  const auto uppperLimitSize = 30;
   const auto lowerLimitThreads = 0;
-  const auto uppperLimitThreads = 32;
-  for (auto k = lowerLimitThreads; k <= uppperLimitThreads;
-       (k == 0) ? k = 1 : k *= 2) {
-    for (auto i = lowerLimitSize; i <= uppperLimitSize; ++i) {
-      for (auto j = lowerLimitChunk; i <= uppperLimitChunk; ++i) {
+  const auto uppperLimitThreads = 256;
+  for (auto i = lowerLimitSize; i <= uppperLimitSize; ++i) {
+    for (auto j = lowerLimitChunk; j <= uppperLimitChunk; ++j) {
+      for (auto k = lowerLimitThreads; k <= uppperLimitThreads;
+           (k == 0) ? k = 1 : k *= 2) {
         b->Args({ 1 << i, 1 << j, k });
       }
     }
