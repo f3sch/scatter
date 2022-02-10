@@ -91,9 +91,10 @@ void benchOmpArgs(benchmark::internal::Benchmark *b)
   const auto uppperLimitChunk = 5;
   const auto lowerLimitSize = 5;
   const auto uppperLimitSize = 10;
-  const auto lowerLimitSize = 0;
-  const auto uppperLimitSize = 8;
-  for (auto k = lowerLimitThreads; k <= uppperLimitThreads; ++k) {
+  const auto lowerLimitThreads = 0;
+  const auto uppperLimitThreads = 32;
+  for (auto k = lowerLimitThreads; k <= uppperLimitThreads;
+       (k == 0) ? k = 1 : k *= 2) {
     for (auto i = lowerLimitSize; i <= uppperLimitSize; ++i) {
       for (auto j = lowerLimitChunk; i <= uppperLimitChunk; ++i) {
         b->Args({ 1 << i, 1 << j, k });
